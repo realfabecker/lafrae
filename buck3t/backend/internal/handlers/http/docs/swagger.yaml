@@ -1,0 +1,97 @@
+definitions:
+  EmptyResponseDTO:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  MidiaUpload:
+    properties:
+      url:
+        example: https://images.com.br/image.jpg
+        type: string
+    type: object
+  ResponseDTO-MidiaUpload:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/MidiaUpload'
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Buck3t Rest API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Buck3t Rest API
+  version: "1.0"
+paths:
+  /buck3t/{keyPrefix}/upload-url:
+    get:
+      description: Get upload url
+      parameters:
+      - description: FileName
+        in: query
+        name: file
+        required: true
+        type: string
+      - description: ContentType
+        in: query
+        name: contentType
+        required: true
+        type: string
+      - description: Key prefix
+        in: path
+        name: keyPrefix
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-MidiaUpload'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get upload url
+      tags:
+      - Bucket
+  /buck3t/status:
+    get:
+      description: healthcheck
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/EmptyResponseDTO'
+      summary: healthcheck
+      tags:
+      - Bucket
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type 'Bearer ' and than your API token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

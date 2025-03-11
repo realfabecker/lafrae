@@ -1,0 +1,470 @@
+definitions:
+  EmptyResponseDTO:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  PagedDTO-Transaction:
+    properties:
+      has_more:
+        example: false
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/Transaction'
+        type: array
+      page_count:
+        example: 10
+        type: integer
+      page_token:
+        type: string
+    type: object
+  PagedDTO-TransactionDetail:
+    properties:
+      has_more:
+        example: false
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/TransactionDetail'
+        type: array
+      page_count:
+        example: 10
+        type: integer
+      page_token:
+        type: string
+    type: object
+  ResponseDTO-PagedDTO-Transaction:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/PagedDTO-Transaction'
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  ResponseDTO-PagedDTO-TransactionDetail:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/PagedDTO-TransactionDetail'
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  ResponseDTO-Transaction:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/Transaction'
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  ResponseDTO-TransactionDetail:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/TransactionDetail'
+      message:
+        example: Operação realizada com sucesso
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  Transaction:
+    description: Transaction information
+    properties:
+      createdAt:
+        example: "2023-04-07T16:45:30Z"
+        type: string
+      description:
+        example: Supermercado
+        type: string
+      dueDate:
+        example: "2023-05-07"
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/TransactionStatus'
+        enum:
+        - paid
+        - cancelled
+        - pending
+        example: paid
+      title:
+        example: Supermercado
+        type: string
+      transactionId:
+        example: 2023050701GXEH91YBVV40C1FK50S1P0KC
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/TransactionType'
+        enum:
+        - expense
+        - income
+        - invoice
+        - detail
+        example: expense
+      userId:
+        example: e8ec3241-03b4-4aed-99d5-d72e1922d9b8
+        type: string
+      value:
+        example: 200
+        minimum: 1
+        type: number
+    required:
+    - description
+    - dueDate
+    - title
+    - transactionId
+    - userId
+    - value
+    type: object
+  TransactionDetail:
+    description: Invoice Detail information
+    properties:
+      createdAt:
+        example: "2023-04-07T16:45:30Z"
+        type: string
+      description:
+        example: Supermercado
+        type: string
+      detailId:
+        example: 2023050701GXEH91YBVV40C1FK50S1P0KC
+        type: string
+      title:
+        example: Supermercado
+        type: string
+      transactionId:
+        example: 2023050701GXEH91YBVV40C1FK50S1P0XD
+        type: string
+      userId:
+        example: e8ec3241-03b4-4aed-99d5-d72e1922d9b8
+        type: string
+      value:
+        example: 200
+        minimum: 1
+        type: integer
+    required:
+    - description
+    - title
+    - transactionId
+    - userId
+    - value
+    type: object
+  TransactionStatus:
+    enum:
+    - paid
+    - pending
+    - cancelled
+    type: string
+    x-enum-varnames:
+    - TransactionPaid
+    - TransactionPending
+    - TransactionCancelled
+  TransactionType:
+    enum:
+    - expense
+    - income
+    type: string
+    x-enum-varnames:
+    - TransactionTypeExpense
+    - TransactionTypeIncome
+info:
+  contact: {}
+  description: Wallet Rest API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Wallet Rest API
+  version: "1.0"
+paths:
+  /wallet/transactions:
+    get:
+      description: List transactions
+      parameters:
+      - description: Number of records
+        in: query
+        name: limit
+        required: true
+        type: number
+      - description: Pagination token
+        in: query
+        name: page_token
+        type: string
+      - description: Transaction due date
+        in: query
+        name: due_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-PagedDTO-Transaction'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: List transactions
+      tags:
+      - Transactions
+    post:
+      description: Create a new transaction record
+      parameters:
+      - description: Transaction payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-Transaction'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create a transaction
+      tags:
+      - Transactions
+  /wallet/transactions/{transactionId}:
+    delete:
+      description: Delete transaction
+      parameters:
+      - description: Transaction id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/EmptyResponseDTO'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Delete transaction
+      tags:
+      - Transactions
+    get:
+      description: Get transaction by id
+      parameters:
+      - description: Transaction id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-Transaction'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get transaction by id
+      tags:
+      - Transactions
+    put:
+      description: Update/Create a transaction record
+      parameters:
+      - description: Transaction id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Transaction payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-Transaction'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Put a transaction
+      tags:
+      - Transactions
+  /wallet/transactions/{transactionId}/details:
+    get:
+      description: List transaction details
+      parameters:
+      - description: Number of records
+        in: query
+        name: limit
+        required: true
+        type: number
+      - description: Pagination token
+        in: query
+        name: page_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-PagedDTO-TransactionDetail'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: List transaction details
+      tags:
+      - Transactions
+    post:
+      description: Create a new transaction detail record
+      parameters:
+      - description: TransactionDetail payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/TransactionDetail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-TransactionDetail'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create a transaction detail
+      tags:
+      - Transactions
+  /wallet/transactions/{transactionId}/details/{detailId}:
+    delete:
+      description: Delete a transaction detail by its id
+      parameters:
+      - description: Transaction id
+        in: path
+        name: transactionId
+        required: true
+        type: string
+      - description: Detail id
+        in: path
+        name: detailId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-TransactionDetail'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a transaction detail by its id
+      tags:
+      - Transactions
+    get:
+      description: Get transaction detail by id
+      parameters:
+      - description: Transaction id
+        in: path
+        name: transactionId
+        required: true
+        type: string
+      - description: Detail id
+        in: path
+        name: detailId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseDTO-TransactionDetail'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Get transaction detail by id
+      tags:
+      - Transactions
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type 'Bearer ' and than your API token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

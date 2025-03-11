@@ -1,0 +1,12 @@
+[submodule "projects/auth3"]
+	path = projects/auth3
+	url = git@github.com:realfabecker/auth3.git
+[submodule "projects/wallet"]
+	path = projects/wallet
+	url = git@github.com:realfabecker/tracker.git
+[submodule "projects/photos"]
+	path = projects/photos
+	url = git@github.com:realfabecker/photos.git
+[submodule "projects/buck3t"]
+	path = projects/buck3t
+	url = git@github.com:realfabecker/buck3t.git

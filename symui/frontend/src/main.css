@@ -1,0 +1,24 @@
+div#root {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: grid;
+    margin:0;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto 1fr;
+}
+
+header {
+    grid-column: 1/3;
+    text-align: center;
+}
+
+main {
+    overflow-y: auto;
+    padding: 1em;
+}
+
+nav {
+    overflow-y: auto;
+    padding: 1em;
+}
