@@ -1,0 +1,27 @@
+services:
+  typescript:
+    build:
+      context: .
+      target: dev
+    working_dir: /home/nonroot/app
+    tty: true
+    volumes:
+      - .:/home/nonroot/app
+      - node_modules:/home/nonroot/app/node_modules
+    ports:
+      - "3000:3000"
+    entrypoint: npm run watch
+
+  database:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=donatelo
+      - POSTGRES_PASSWORD=donatelo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  node_modules:
+  pgdata:
