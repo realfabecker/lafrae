@@ -1,7 +1,8 @@
-import { IssueProvider } from "core/enum/IssueProvider";
+import { IssueProvider } from "core/domain/issues/enums/IssueProvider";
+import { IssueStatus } from "core/domain/issues/enums/IssueStatus";
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: "issue", schema: "issue" })
+@Entity({ name: "issue", schema: "public" })
 @Index(["created_at", "status"])
 @Index(["provider", "external_id"], { unique: true })
 export class Issue {
@@ -18,7 +19,7 @@ export class Issue {
   assignee!: string;
 
   @Column({ type: "varchar", name: "status", length: 255, nullable: false })
-  status!: string;
+  status!: IssueStatus;
 
   @Column({ type: "varchar", name: "provider", length: 255, nullable: false })
   provider!: IssueProvider;
@@ -36,4 +37,23 @@ export class Issue {
 
   @Column({ type: "jsonb", name: "config", nullable: true })
   config!: Record<string, any>;
+
+  @Column({ type: "varchar", name: "issue_type", length: 255, nullable: false })
+  issueType!: string;
+
+  @Column({ type: "varchar", name: "priority", length: 255, nullable: true })
+  priority!: string;
+
+  @Column({ type: "varchar", name: "sprint", length: 255, nullable: true })
+  sprint!: string;
+
+  @Column({ type: "varchar", name: "team", length: 255, nullable: true })
+  team!: string;
+
+  @Column({
+    type: "smallint",
+    name: "story_points",
+    nullable: true,
+  })
+  storyPoints!: number;
 }

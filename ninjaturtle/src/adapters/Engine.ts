@@ -1,13 +1,10 @@
-import { IRepositoryProvider } from "core/ports/IRepositoryProvider";
-import { PostgresRepositoryProvider } from "./repostories/PostgresRepositoryProvider";
-import { HttpExternalProvider } from "./external/HttpExternalProvider";
-import { IExternalProvider } from "core/ports/IExternalProvider";
 import { IConfigReader } from "core/ports/IConfigReader";
 import { YamlConfigReader } from "./configuration/YamlConfigReader";
+import { PostgresDataSource } from "../database/datasource/PostgresDataSource";
+import { JiraHttpIssueProvider } from "./external/JiraHttpIssueProvider";
 
 export class Engine {
   private static instance: Engine;
-
   private constructor(private readonly configReader: IConfigReader) {}
 
   public static getInstance() {
@@ -17,13 +14,13 @@ export class Engine {
     return this.instance;
   }
 
-  public async createRepositoryProvider(): Promise<IRepositoryProvider> {
+  public async getPostgresDataSource(): Promise<PostgresDataSource> {
     const appConfig = this.configReader.getConfig();
-    return await PostgresRepositoryProvider.init(appConfig.database.provider);
+    return PostgresDataSource.init(appConfig.database.provider);
   }
 
-  public async createExternalProvider(): Promise<IExternalProvider> {
-    const appConfig = this.configReader.getConfig();
-    return await HttpExternalProvider.init(appConfig.external.provider);
+  public async getJiraExternalProvider(): Promise<JiraHttpIssueProvider> {
+    const providerConfig = this.configReader.getConfig().external.provider;
+    return new JiraHttpIssueProvider(providerConfig.config);
   }
 }

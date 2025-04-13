@@ -1,15 +1,22 @@
-import { IssueProvider } from "core/enum/IssueProvider";
-import { AbstractModel } from "./AbstractModel";
+import { IssueProvider } from "core/domain/issues/enums/IssueProvider";
+import { AbstractModel } from "../AbstractModel";
+import { IssueStatus } from "./enums/IssueStatus";
 
 type IssueProps = {
+  id: string;
   title: string;
   assignee: string;
-  status: string;
+  status: IssueStatus;
   provider: IssueProvider;
   createdAt: Date;
   link: string;
   config: Record<string, any>;
   externalId: string;
+  issueType?: string;
+  priority?: string;
+  sprint?: string;
+  team?: string;
+  storyPoints?: number;
 };
 
 export class Issue extends AbstractModel {
@@ -87,5 +94,45 @@ export class Issue extends AbstractModel {
 
   public setConfig(config: Record<string, any>) {
     this.set("config", config);
+  }
+
+  public getIssueType(): string {
+    return this.get("issueType");
+  }
+
+  public setIssueType(issueType: string): void {
+    this.set("issueType", issueType);
+  }
+
+  public getPriority(): string {
+    return this.get("priority");
+  }
+
+  public setPriority(priority: string): void {
+    this.set("priority", priority);
+  }
+
+  public getSprint(): string {
+    return this.get("sprint");
+  }
+
+  public setSprint(sprint: string): void {
+    this.set("sprint", sprint);
+  }
+
+  public getTeam(): string {
+    return this.get("team");
+  }
+
+  public setTeam(team: string): void {
+    this.set("team", team);
+  }
+
+  public getStoryPoints(): number {
+    return this.get("storyPoints");
+  }
+
+  public setStoryPoints(storyPoints: number): void {
+    this.set("storyPoints", storyPoints);
   }
 }

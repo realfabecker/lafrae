@@ -1,5 +1,6 @@
-import { Issue as DomainIssue } from "core/domain/Issue";
+import { IssuePaginateFilter } from "core/domain/jira/IssuePaginateFilter";
+import { Issue as DomainIssue } from "core/domain/issues/Issue";
 
 export interface IExternalIssueProvider {
-  paginate(jql: string): AsyncGenerator<DomainIssue>;
+  paginate(filter: IssuePaginateFilter): AsyncGenerator<DomainIssue>;
 }
