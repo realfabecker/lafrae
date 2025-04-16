@@ -25,7 +25,7 @@ export class SearchForIssuesWithPagedOutput {
           return new SearchableIssue(DomainSerializer.serialize(h));
         },
       );
-      return DomainResult.OK(
+      return DomainResult.Ok(
         Page.fromList({
           items: records,
           page: filter.getPage(),

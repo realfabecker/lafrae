@@ -38,7 +38,7 @@ export class ImportIssuesFromExternalProvider {
       if (lastImportedIssueId) {
         await this.saveLastImportedIssueId(lastImportedIssueId);
       }
-      return DomainResult.OK();
+      return DomainResult.Ok();
     } catch (e) {
       return DomainResult.Error(<Error>e);
     }

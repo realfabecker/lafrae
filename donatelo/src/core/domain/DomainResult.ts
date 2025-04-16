@@ -12,8 +12,8 @@ export class DomainResult<T = any, E = DomainError> extends AbstractModel {
     super(opts);
   }
 
-  public static OK<T>(payload?: T) {
-    return new DomainResult({ success: true, payload });
+  public static Ok<T>(payload?: T) {
+    return new DomainResult<T>({ success: true, payload });
   }
 
   public static Error(error: Error) {

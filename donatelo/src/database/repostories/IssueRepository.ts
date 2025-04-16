@@ -34,6 +34,16 @@ export class IssueRepository implements IIssueRepository {
     return issue;
   }
 
+  public async findByInternalId(
+    internalId: string,
+  ): Promise<DomainIssue | null> {
+    const issueEntity = await this.d
+      .getRepository(IssueEntity)
+      .findOneBy({ id: internalId });
+    if (!issueEntity) return null;
+    return IssueMapper.toDomain(issueEntity);
+  }
+
   public async findByExternalId(
     externalId: string,
   ): Promise<DomainIssue | null> {
