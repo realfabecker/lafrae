@@ -1,0 +1,155 @@
+<!doctype html>
+<head>
+  <title>Google Auth</title>
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <style>
+    button {
+      width: 100%; 
+      cursor: pointer; 
+      font-size: 14px; 
+      text-align: center; 
+      border-radius: 4px;
+       height: 40px; 
+       background-color: #fff; 
+       border: 1px solid #dadce0;  
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const client_id = ""
+    window.onload = function () {
+      window.addEventListener('message', function(event) {
+        console.log("Message received from the child: ", event.data);
+      });
+
+      const token = new URLSearchParams(location.search)?.get("token");
+      setPageTokenFromAcessResult(token)
+    };
+
+    function setPageTokenFromAcessResult(token) {  
+      let data = token ? getDecodedJwtTokenAsString(token) ?? "{}": "{}";    
+      if (!token) {
+        document.getElementById("login-request").style.display = "block";
+        document.getElementById("login-response").style.display = "none";
+        document.getElementById("login-iframe").style.display = "none"
+
+        if(location.href === "https://web.oauth.trunk.com.br/"){
+          document.getElementById("login-iframe").style.display = "block"
+        }
+      } else {
+        document.getElementById("login-iframe").style.display = "none";
+        document.getElementById("login-request").style.display = "none";
+        document.getElementById("login-response").style.display = "block";        
+        document.getElementById("login-token").innerText = data       
+      }
+      return data;
+    }
+
+    function getDecodedJwtTokenAsString(token) {      
+        const auth = token.split(".")?.[1] ?? null;
+        if (auth === null) return null;
+        const data = JSON.parse(atob(auth));
+        return JSON.stringify(data, null, "  ")
+    }
+      
+    async function handleOnClickSignInWithOpenId() {    
+      let url = "";
+      try {
+        const data = await (await fetch("https://api.oauth.local.com.br/google/auth-url", {
+          method: "POST",        
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ redirectTo: location.href }),
+        })).json()
+        url = data.url
+      } catch (e) {
+        document.getElementById("open-id-msg").innerText= `* Não foi possível obter a URL ${e}`
+      }      
+      
+      if(url){        
+        const params = new URL(url).searchParams.entries().reduce((acc, [k,v]) => ({[k]:v, ...acc}), {})
+        
+        let startIn = 5;
+        document.getElementById("open-id-msg").innerText= `* URL (${startIn}s) ${url.substring(0,100)}...\n\n${JSON.stringify(params, null, "   ")}`
+
+        setTimeout(() => {
+          window.open(url, "_self")
+        },5 * 1000)
+
+        const interval = setInterval(() => {          
+          startIn--;
+          if(startIn < 0 ){
+            clearInterval(interval)
+          } else {
+            document.getElementById("open-id-msg").innerText= `* URL (${startIn}s) ${url.substring(0,100)}...\n\n${JSON.stringify(params, null, "   ")}`
+          }
+        }, 1000);
+      }      
+    }
+
+    function handleOnClickSetLoginOneTapWithCallback() {
+      google.accounts.id.initialize({
+        client_id: client_id,
+        ux_mode: "popup",
+        callback: (response) => {
+          const token =  setPageTokenFromAcessResult(response?.credential ?? null);
+          parent.postMessage({type: "login:success", token}, "*")
+        }
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("google-button-callback"),
+        { theme: "outline", size: "large" },
+      );
+      document.getElementById("setup-callback").style.display = "none";
+    }
+
+    function handleOnClickSetLoginOneTapWithRedirect() {
+      google.accounts.id.initialize({
+        client_id: client_id,
+        ux_mode: "redirect",
+        login_uri: "https://api.oauth.local.com.br/google/callback",
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("google-button-redirect"),
+        { theme: "outline", size: "large" },
+      );
+      document.getElementById("setup-redirect").style.display = "none";
+    }    
+  </script>
+
+  <h3>Estratégias de autenticação: Google</h3>
+
+  <div id="login-request">
+    <div id="login-callback" style="max-width: 250px;">
+      <h3>1. Google Sign In (Callback)</h3>      
+      <div id="google-button-callback"></div>
+      <button id="setup-callback" onclick="handleOnClickSetLoginOneTapWithCallback()">Setup Login (Callback)</button>
+      <!-- a. o dominio do aplicativo deve estar registrado como URL de origem e redirect -->
+    </div>
+
+    <div id="login-redirect" style="max-width: 250px;">
+      <h3>2. Google Sign In (Redirect)</h3>
+      <div id="google-button-redirect"></div>
+      <button id="setup-redirect" onclick="handleOnClickSetLoginOneTapWithRedirect()">Setup Login (Redirect)</button>
+      <!-- a. o dominio de destino deve estar registrado na relação de URLS de redirect -->
+    </div>    
+  
+    <div id="login-openid"style="max-width: 250px;">
+      <h3>3. Google Sign In (OpenID)</h3>
+      <button onclick="handleOnClickSignInWithOpenId()">Fazer login com OpenID</button>
+      <!-- a. o dominio de destino deve estar registrado na relação de URLS de redirect -->
+    </div>
+    <div id="login-iframe">
+      <h3>4. Google Sign In (Iframe)</h3>
+      <iframe src="https://web.oauth.local.com.br" title="description"></iframe>      
+    </div>
+    <p id="open-id-msg"></p>
+  </div>
+    
+  <div id="login-response">
+    <a style="margin-bottom: 1.5rem; display: block;" href="/">Home</a>
+    <div id="login-token"></div>
+  </div>
+</body>

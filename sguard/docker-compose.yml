@@ -1,0 +1,17 @@
+services:
+  magazord-tfk:
+      image: "traefik:v2.6"
+      command:
+        - "--api.insecure=true"
+        - "--log.level=debug"
+      ports:
+        - "80:80"
+        - "443:443"
+        - "8000:8080"
+      extra_hosts:
+        - "host.docker.internal:${HOST_IP:-127.0.0.1}"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - ./config/traefik/static.yml:/etc/traefik/traefik.yml:ro
+        - ./config/traefik/dynamic:/etc/traefik/dynamic:ro
+        - ./config/ssl:/etc/certs:ro

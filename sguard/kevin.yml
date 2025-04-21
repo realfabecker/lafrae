@@ -1,0 +1,11 @@
+commands:
+  - name: "g2"
+    short: "g2 command group"
+    commands:
+      - name: "gen-cert"
+        short: "generate ssl certificate group"
+        cmd: |
+          mkcert --key-file ./config/ssl/sguard-key.pem --cert-file ./config/ssl/sguard.pem \
+            web.oauth.local.com.br \
+            api.oauth.local.com.br \
+            web.oauth.trunk.com.br
