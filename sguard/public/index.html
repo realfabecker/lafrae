@@ -16,15 +16,23 @@
   </style>
 </head>
 <body>
-  <script>
+  <script>    
     const client_id = ""
-    window.onload = function () {
-      window.addEventListener('message', function(event) {
-        console.log("Message received from the child: ", event.data);
-      });
 
-      const token = new URLSearchParams(location.search)?.get("token");
-      setPageTokenFromAcessResult(token)
+    window.onload = function () {      
+      window.addEventListener('message', function(event) {        
+        if(event.origin !== "https://web.oauth.local.com.br") {
+          return;
+        }
+        console.log("Message received from the child: ", event.data, event.origin);
+        if(event?.data?.data?.token){
+          setPageTokenFromAcessResult(event?.data?.data?.token)
+        }
+      });
+      setPageTokenFromAcessResult(new URLSearchParams(location.search)?.get("token") ?? null)
+      if(location.href === "https://web.oauth.trunk.com.br/"){
+        createDivElementIframeLoginCallback()
+      }
     };
 
     function setPageTokenFromAcessResult(token) {  
@@ -32,16 +40,17 @@
       if (!token) {
         document.getElementById("login-request").style.display = "block";
         document.getElementById("login-response").style.display = "none";
-        document.getElementById("login-iframe").style.display = "none"
-
-        if(location.href === "https://web.oauth.trunk.com.br/"){
+        if(document.getElementById("login-iframe")) {
           document.getElementById("login-iframe").style.display = "block"
-        }
+        }        
       } else {
-        document.getElementById("login-iframe").style.display = "none";
+        if(document.getElementById("login-iframe")) {
+          document.getElementById("login-iframe").style.display = "none"
+        }
         document.getElementById("login-request").style.display = "none";
         document.getElementById("login-response").style.display = "block";        
-        document.getElementById("login-token").innerText = data       
+        document.getElementById("login-token-val").innerText = data
+        document.getElementById("login-token-raw").innerText = token
       }
       return data;
     }
@@ -93,10 +102,7 @@
       google.accounts.id.initialize({
         client_id: client_id,
         ux_mode: "popup",
-        callback: (response) => {
-          const token =  setPageTokenFromAcessResult(response?.credential ?? null);
-          parent.postMessage({type: "login:success", token}, "*")
-        }
+        callback: (response) => setPageTokenFromAcessResult(response?.credential ?? null)
       });
       google.accounts.id.renderButton(
         document.getElementById("google-button-callback"),
@@ -116,7 +122,40 @@
         { theme: "outline", size: "large" },
       );
       document.getElementById("setup-redirect").style.display = "none";
-    }    
+    }
+
+    function createDivElementIframeLoginCallback() {
+      const template = document.createElement("template");      
+      template.innerHTML = `
+        <div id="login-iframe">
+          <h3>4. Google Sign In (Iframe)</h3>
+          <iframe style="border:0;" src="https://web.oauth.local.com.br/social?provider=google" title="description"></iframe>  
+        </div>
+      `
+      const node = template.content.firstElementChild
+      document.getElementById("login-request").appendChild(node)
+    }
+
+    async function handleOnClickVerifyLoginCredentials() {
+      const token = document.getElementById("login-token-raw").innerText;
+      let data = {}
+      try {
+        data = await (await fetch("https://api.oauth.local.com.br/google/verify-id-token", {
+          method: "POST",        
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ id_token: token }),
+        })).json()
+
+      } catch (e) {
+        document.getElementById("login-token-res").innerText= `* Não foi possível validar o token ${e}`
+      }
+
+      if(Object.keys(data).length){        
+        document.getElementById("login-token-res").innerText= JSON.stringify(data, null, "   ")
+      }
+    }
   </script>
 
   <h3>Estratégias de autenticação: Google</h3>
@@ -141,15 +180,17 @@
       <button onclick="handleOnClickSignInWithOpenId()">Fazer login com OpenID</button>
       <!-- a. o dominio de destino deve estar registrado na relação de URLS de redirect -->
     </div>
-    <div id="login-iframe">
-      <h3>4. Google Sign In (Iframe)</h3>
-      <iframe src="https://web.oauth.local.com.br" title="description"></iframe>      
-    </div>
+    
     <p id="open-id-msg"></p>
   </div>
     
   <div id="login-response">
     <a style="margin-bottom: 1.5rem; display: block;" href="/">Home</a>
-    <div id="login-token"></div>
+    <div id="login-token">
+      <div id="login-token-val"></div>  
+      <div id="login-token-raw"></div>  
+      <button style="max-width: 250px; margin-top: 1.5rem;" onclick="handleOnClickVerifyLoginCredentials()">Verify</button>
+      <div id="login-token-res"></div>  
+    </div>
   </div>
 </body>
