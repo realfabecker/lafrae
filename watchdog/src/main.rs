@@ -1,10 +1,7 @@
-use std::{env, error, io, path, str};
-
 use clap::Parser;
-use regex::RegexBuilder;
-
 use domain::{Args, Config, Template};
-
+use regex::RegexBuilder;
+use std::{env, error, io, path, str};
 mod domain;
 
 async fn notify(
