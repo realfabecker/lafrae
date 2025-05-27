@@ -1,0 +1,17 @@
+{
+    "name": "typescript",
+    "dockerComposeFile": "../docker-compose.yml",
+    "workspaceFolder": "/home/nonroot/app",
+    "service": "typescript",
+    "customizations": {
+      "vscode": {
+        "extensions": [          
+          "esbenp.prettier-vscode",
+          "github.copilot",
+          "github.vscode-github-actions",
+          "ms-vscode-remote.remote-containers",
+          "ms-vscode.makefile-tools"
+        ]
+      }
+    }
+  }
