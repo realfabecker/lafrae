@@ -1,60 +1,71 @@
-import { GoogleEmailMessageProvider } from "adapters/providers/GoogleEmailMessageProvider";
-import { RegexMessageDetailExtractor } from "adapters/providers/RegexMessageDetailExtractor";
-import { EnergyBillDynamoDbRepository } from "database/dynamodb/repositories/EnergyBillDynamoRepository";
+import { ConsoleLogger } from "src/adapters/providers/ConsoleLogger";
+import { GoogleEmailMessageProvider } from "src/adapters/providers/GoogleEmailMessageProvider";
+import { RegexMessageDetailExtractor } from "src/adapters/providers/RegexMessageDetailExtractor";
+import { SQSQueueProvider } from "src/adapters/providers/SQSQueueProvider";
+import { EnergyBillDynamoDbRepository } from "src/database/dynamodb/repositories/EnergyBillDynamoRepository";
+import { CrawlerInMemRepository } from "src/database/inmem/repositories/CrawlerInMemRepository";
+import { S3ObjectStorageRepository } from "src/database/s3/repositories/S3ObjectStorageRepository";
+import { ImportMessageAttachment } from "src/features/ImportMessageAttachment";
+import { ImportMessageTypeDetails } from "src/features/ImportMessageTypeDetails";
+import { ScheduleMessageTypeImport } from "src/features/ScheduleMessageTypeImport";
 
-import { CrawlerInMemRepository } from "database/inmem/repositories/CrawlerInMemRepository";
-import { LocalObjectStorageRepository } from "database/s3/repositories/LocalObjectStorageRepository";
-import { S3ObjectStorageRepository } from "database/s3/repositories/S3ObjectStorageRepository";
-import { ImportEnergyBillAttachments } from "features/ImportEnergyBillAttachments";
-import { ImportEnergyBillDetails } from "features/ImportEnergyBillDetails";
-import { ScheduleEnergyBillsImport } from "features/ScheduleEnergyBillsImport";
-
-async function useCaseScheduleImport(accessToken: string) {
-  const useCase = new ScheduleEnergyBillsImport({
-    emailProvider: new GoogleEmailMessageProvider(accessToken),
+async function useCaseScheduleImport(queueUrl: string) {
+  const useCase = new ScheduleMessageTypeImport({
+    emailProvider: new GoogleEmailMessageProvider(),
     crawlerRepository: new CrawlerInMemRepository(),
+    queueProvider: new SQSQueueProvider(queueUrl),
+    logger: new ConsoleLogger(),
   });
-  return useCase.run("123456");
+  return useCase.run({ crawlerId: "123456" });
 }
 
 async function useCaseImportDetails(
-  accessToken: string,
+  userId: string,
   messageId: string,
-  crawlerId: "123456",
+  crawlerId: string = "123456",
 ) {
-  const useCase = new ImportEnergyBillDetails({
-    emailProvider: new GoogleEmailMessageProvider(accessToken),
+  const useCase = new ImportMessageTypeDetails({
+    emailProvider: new GoogleEmailMessageProvider(),
     crawlerRepository: new CrawlerInMemRepository(),
     detailExtractor: new RegexMessageDetailExtractor(),
-    energyBillRepository: new EnergyBillDynamoDbRepository(),
+    energyBillRepository: new EnergyBillDynamoDbRepository("sintese"),
   });
-  return useCase.run(messageId, crawlerId);
+  return useCase.run({ userId, messageId, crawlerId });
 }
 
-async function useCaseImportAttachments(
-  accessToken: string,
-  messageId: string,
-) {
-  const useCase = new ImportEnergyBillAttachments(
-    new GoogleEmailMessageProvider(accessToken),
-    new EnergyBillDynamoDbRepository(),
+async function useCaseImportAttachments(userId: string, messageId: string) {
+  const useCase = new ImportMessageAttachment(
+    new GoogleEmailMessageProvider(),
+    new EnergyBillDynamoDbRepository("sintese"),
     new S3ObjectStorageRepository(),
+    new ConsoleLogger(),
   );
-  return useCase.run(messageId);
+  return useCase.run({ userId, messageId });
 }
 
 (async () => {
   try {
-    const accessToken = "";
+    // const result = await useCaseImportDetails(
+    //   accessToken,
+    //   "01972d36-00b7-7617-b9e5-f228a0545ec2",
+    //   "1970cbeb69114f7a",
+    // );
 
-    const result = await useCaseImportAttachments(
-      accessToken,
-      "1970cbeb69114f7a",
+    // const result = await useCaseImportAttachments(
+    //   accessToken,
+    //   "01972d36-00b7-7617-b9e5-f228a0545ec2",
+    //   "019736b1-ea1e-7119-bc8e-f70a4fe34ad7",
+    // );
+
+    const result = await useCaseScheduleImport(
+      process.env.SQS_QUEUE_URL as string,
     );
+
     if (!result.isSuccess()) {
       console.log(result.getError().getErrorDescription());
       process.exit(1);
     }
+
     console.log("Done!");
   } catch (e) {
     console.log(e);

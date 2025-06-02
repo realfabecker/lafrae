@@ -1,4 +1,4 @@
-import { DomainResult } from "core/domain/common/DomainResult";
+import { DomainResult } from "src/core/domain/common/DomainResult";
 
 export type ObjectStorageUploadOpts = {
   key: string;

@@ -1,6 +1,6 @@
-import { MessageCrawler } from "core/domain/crawler/MessageCrawler";
-import { ProviderPattern } from "core/domain/crawler/ProviderPattern";
-import { ICrawlerRepository } from "core/ports/ICrawlerRepository";
+import { MessageCrawler } from "src/core/domain/crawler/MessageCrawler";
+import { ProviderPattern } from "src/core/domain/crawler/ProviderPattern";
+import { ICrawlerRepository } from "src/core/ports/ICrawlerRepository";
 
 export class CrawlerInMemRepository implements ICrawlerRepository {
   async getCrawler(id: string): Promise<MessageCrawler> {

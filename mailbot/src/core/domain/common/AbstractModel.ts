@@ -24,4 +24,8 @@ export abstract class AbstractModel {
   public get<T = any>(key: string): T {
     return (<Record<string, T>>this.data)[key];
   }
+
+  public serialize(): Record<string, any> {
+    return DomainSerializer.serialize(this);
+  }
 }

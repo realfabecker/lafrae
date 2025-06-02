@@ -1,0 +1,44 @@
+commands:
+  - name: "worker"
+    short: "worker bundle"
+    commands:
+      - name: "aws"
+        short: "aws operations"
+        commands:
+          - name: "create-table"
+            short: "create base table"
+            cmd: |
+              aws --profile localstack dynamodb create-table --cli-input-json file://./config/sintese.json
+          - name: "delete-table"
+            short: "delete base table"
+            cmd: |
+              aws --profile localstack dynamodb delete-table --table-name sintese
+          - name: "scan-table"
+            short: "scan base table"
+            cmd: |
+              aws --profile localstack dynamodb scan --table-name sintese
+          - name: "create-bucket"
+            short: "create base bucket"
+            cmd: |
+              aws --profile localstack s3api create-bucket --bucket sintese
+          - name: "delete-bucket"
+            short: "delete base bucket"
+            cmd: |
+              aws --profile localstack s3api delete-bucket --bucket sintese
+          - name: "create-queue"
+            short: "create base queue"
+            cmd: |
+              aws --profile localstack sqs create-queue --queue-name mailbot
+          - name: "queue-info"
+            short: "base queue info"
+            cmd: |
+              aws --profile localstack sqs get-queue-attributes --queue-url http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/mailbot --attribute-names All
+          - name: "send-message"
+            short: "send base message"
+            cmd: |
+              aws --profile localstack sqs send-message --queue-url http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/mailbot --message-body '{"meta": "message_type#EnergyBill", "data": {"messageId": "xxx"}}'
+          - name: "lambda-logs"
+            short: "lambda logs"
+            cmd: |
+              docker logs -f $(docker ps --filter ancestor=public.ecr.aws/lambda/nodejs:18 -q)
+            

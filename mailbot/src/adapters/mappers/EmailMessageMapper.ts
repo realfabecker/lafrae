@@ -1,6 +1,6 @@
-import { EmailAttachment } from "core/domain/email/EmailAttachment";
-import { EmailMessage } from "core/domain/email/EmailMessage";
-import { GoogleEmailMessage } from "core/domain/google/GoogleEmailMessage";
+import { EmailAttachment } from "src/core/domain/email/EmailAttachment";
+import { EmailMessage } from "src/core/domain/email/EmailMessage";
+import { GoogleEmailMessage } from "src/core/domain/google/GoogleEmailMessage";
 
 export class EmailMessageMapper {
   static fromGoogle(message: GoogleEmailMessage): EmailMessage {
@@ -14,7 +14,7 @@ export class EmailMessageMapper {
       }
     }
     let attachments: EmailAttachment[] = [];
-    if (message.payload.parts) {
+    if (message?.payload?.parts) {
       attachments = message.payload.parts
         .filter((p) => p.mimeType === "application/pdf")
         .map((a) => {

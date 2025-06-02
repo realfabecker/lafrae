@@ -1,0 +1,94 @@
+service: mailbot
+
+frameworkVersion: '3'
+
+useDotenv: true
+
+plugins:
+  - serverless-localstack
+  - serverless-plugin-typescript
+
+custom:
+  localstack:
+    stages:
+      - dev
+    host: http://localhost
+    endgePort: 4566
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+  profile: localstack
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["SinteseDynamoDBTable", "Arn" ] }
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+      Resource:
+        - { "Fn::GetAtt": ["SinteseS3Bucket", "Arn" ] }
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+      Resource:
+        - { "Fn::GetAtt": ["MailbotSQSQueue", "Arn" ] }
+
+functions:
+  mailbot-sqs-consumer:
+    handler: ./bin/lambda/sqs.handler
+    environment:
+      SQS_QUEUE_URL: { "Fn::GetAtt": ["MailbotSQSQueue", "QueueUrl"] }
+    events:
+      - sqs:
+          arn: { "Fn::GetAtt": ["MailbotSQSQueue", "Arn" ] }
+          batchSize: 1
+          enabled: true
+
+resources:
+  Resources:
+    MailbotSQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: mailbot
+        DelaySeconds: 0
+    SinteseS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: sintese
+    SinteseDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: sintese
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: GSI1_PK
+            AttributeType: S
+          - AttributeName: GSI1_SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:         
+          - IndexName: GSI_1
+            Projection:
+              ProjectionType: ALL
+            KeySchema:
+            - AttributeName: GSI1_PK
+              KeyType: HASH
+            - AttributeName: GSI1_SK
+              KeyType: RANGE

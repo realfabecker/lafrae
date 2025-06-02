@@ -1,12 +1,15 @@
-import { DomainResult } from "core/domain/common/DomainResult";
-import { EnergyBillInvoice } from "core/domain/invoices/EnergyBillInvoice";
-import { InvoiceAttachment } from "core/domain/invoices/InvoiceAttachment";
+import { DomainResult } from "src/core/domain/common/DomainResult";
+import { Attachment } from "src/core/domain/invoices/Attachment";
+import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
 
 export interface IEnergyBillRepository {
-  save(energyBill: EnergyBillInvoice): Promise<DomainResult<EnergyBillInvoice>>;
-  findById(id: string): Promise<DomainResult<EnergyBillInvoice>>;
+  save(energyBill: EnergyBill): Promise<DomainResult<EnergyBill>>;
+  findById(
+    userId: string,
+    id: string,
+  ): Promise<DomainResult<EnergyBill | null>>;
   upsertAttachments(
     id: string,
-    attachments: InvoiceAttachment[],
+    attachments: Attachment[],
   ): Promise<DomainResult>;
 }

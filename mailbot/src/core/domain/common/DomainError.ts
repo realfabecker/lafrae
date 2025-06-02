@@ -51,6 +51,9 @@ export class DomainError extends AbstractModel {
     if (this.getDetails() === "object") {
       return `${this.getError()}: ${this.getDescription()} : ${JSON.stringify(this.getDetails())}`;
     }
-    return `${this.getError()}: ${this.getDescription()}`;
+    if (this.getDescription()) {
+      return `${this.getError()}: ${this.getDescription()}`;
+    }
+    return this.getError();
   }
 }

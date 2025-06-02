@@ -1,41 +1,110 @@
-import crypto from "node:crypto";
-import { DomainResult } from "core/domain/common/DomainResult";
-import { EnergyBillInvoice } from "core/domain/invoices/EnergyBillInvoice";
-import { InvoiceAttachment } from "core/domain/invoices/InvoiceAttachment";
-import { IEnergyBillRepository } from "core/ports/IEnergyBillRepository";
+import {
+  DynamoDBClient,
+  DynamoDBClientConfig,
+  TransactionCanceledException,
+} from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  TransactWriteCommand,
+} from "@aws-sdk/lib-dynamodb";
+import { EnergyBillMapper } from "src/adapters/mappers/EnergyBillMapper";
+import { DomainResult } from "src/core/domain/common/DomainResult";
+import { MessageAlreadyExists } from "src/core/domain/errors/MessageAlreadyExists";
+import { UnableToCreateInvoice } from "src/core/domain/errors/UnabletToCreateInvoice";
+import { Attachment } from "src/core/domain/invoices/Attachment";
+import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
+import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
 
 export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
-  async save(
-    energyBill: EnergyBillInvoice,
-  ): Promise<DomainResult<EnergyBillInvoice>> {
-    return DomainResult.Ok(energyBill);
+  private readonly client: DynamoDBDocumentClient;
+
+  constructor(private readonly tableName: string) {
+    let config: DynamoDBClientConfig = {
+      region: "us-east-1",
+    };
+    if (process.env.AWS_ENDPOINT) {
+      config = {
+        ...config,
+        endpoint: process.env.AWS_ENDPOINT,
+      };
+    }
+    this.client = DynamoDBDocumentClient.from(new DynamoDBClient(config));
   }
 
-  async findById(id: string): Promise<DomainResult<EnergyBillInvoice>> {
-    const energyBill = new EnergyBillInvoice({
-      userId: crypto.randomUUID(),
-      externalId: "1970cbeb69114f7a",
-      total: 0,
-      dueDate: new Date("2025-06-15"),
-      createdAt: new Date(),
-      days: 29,
-      consumption: 240,
-      reference: "05/2025",
-    });
-    const attachment = new InvoiceAttachment({
-      name: "449000201062.pdf",
-      externalId:
-        "ANGjdJ9x7K8BgS6zkQLIsMRoJGq-cv1-B2zsX-UfvRw5VdVIG3cNaLjKmtHidMdkq0YHDPMb-fOr8glw8UVAHhCVORMguke4rIvJJFs31xyQndifCmjS5O-jy-WuT2Stw5hPSrZChZjVnALkhR8-A8DjEvLqOzLmS2BXfHp3K-YwaGOlGbl5IadenYJx-N4eLnt9a1mZRBLvXmuPnDzUchfOjkBWSw_ZVmGoGnoyISuXA6H3jbzYf8JEYzs3cP3gIapX4iAj5cjUMSjczdBiS2SR_UKv3usYHfwFIM1spWOYATA2MT_N6lMgSr0dVfEIbIEZXpux5c18fbWJgAGxHTwbmo6IXwJqNlTEkmyeYfmwU8zEjSxn9kxnzghNe1wgVxpCvljar5mIpuOlLn2D",
-      contentEncoding: "base64",
-      contentType: "application/pdf",
-    });
-    energyBill.addAttachment(attachment);
-    return DomainResult.Ok(energyBill);
+  async save(energyBill: EnergyBill): Promise<DomainResult<EnergyBill>> {
+    try {
+      const message = EnergyBillMapper.toPersistence(energyBill);
+      const command = new TransactWriteCommand({
+        TransactItems: [
+          {
+            Put: {
+              Item: message.serialize(),
+              ConditionExpression:
+                "attribute_not_exists(PK) and attribute_not_exists(SK)",
+              TableName: this.tableName,
+            },
+          },
+          {
+            Put: {
+              Item: {
+                PK: message.getPK(),
+                SK: `message#external_id#${message.getExternalId()}`,
+                MessageSK: message.getSK(),
+              },
+              ConditionExpression:
+                "attribute_not_exists(PK) and attribute_not_exists(SK)",
+              TableName: this.tableName,
+            },
+          },
+        ],
+      });
+      const result = await this.client.send(command);
+      if (result.$metadata.httpStatusCode !== 200) {
+        return DomainResult.Error(new UnableToCreateInvoice());
+      }
+      return DomainResult.Ok(energyBill);
+    } catch (e) {
+      if (e instanceof TransactionCanceledException) {
+        const duplicated = e.CancellationReasons?.find(
+          (x) => x.Code === "ConditionalCheckFailed",
+        );
+        if (duplicated) {
+          return DomainResult.Error(new MessageAlreadyExists());
+        }
+      }
+      return DomainResult.Error(<Error>e);
+    }
+  }
+
+  async findById(
+    userId: string,
+    messageId: string,
+  ): Promise<DomainResult<EnergyBill | null>> {
+    try {
+      const command = new GetCommand({
+        TableName: this.tableName,
+        Key: {
+          PK: `app#mailbot#user#${userId}`,
+          SK: `message#${messageId}`,
+        },
+      });
+      const result = await this.client.send(command);
+      if (result.$metadata.httpStatusCode !== 200) {
+        return DomainResult.Error(new UnableToCreateInvoice());
+      }
+      if (!result.Item) {
+        return DomainResult.Ok(null);
+      }
+      return DomainResult.Ok(EnergyBillMapper.fromPersistence(result.Item));
+    } catch (e) {
+      return DomainResult.Error(<Error>e);
+    }
   }
 
   async upsertAttachments(
     id: string,
-    attachments: InvoiceAttachment[],
+    attachments: Attachment[],
   ): Promise<DomainResult> {
     return DomainResult.Ok();
   }
