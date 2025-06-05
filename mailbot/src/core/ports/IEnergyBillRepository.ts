@@ -1,6 +1,7 @@
 import { DomainResult } from "src/core/domain/common/DomainResult";
-import { Attachment } from "src/core/domain/invoices/Attachment";
 import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
+import { ListEnergyBillFilter } from "../domain/filters/ListEnergyBillFilter";
+import { Page } from "../domain/paged/Page";
 
 export interface IEnergyBillRepository {
   save(energyBill: EnergyBill): Promise<DomainResult<EnergyBill>>;
@@ -8,8 +9,5 @@ export interface IEnergyBillRepository {
     userId: string,
     id: string,
   ): Promise<DomainResult<EnergyBill | null>>;
-  upsertAttachments(
-    id: string,
-    attachments: Attachment[],
-  ): Promise<DomainResult>;
+  list(filter: ListEnergyBillFilter): Promise<DomainResult<Page<EnergyBill>>>;
 }

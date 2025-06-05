@@ -1,11 +1,19 @@
 import { DomainResult } from "src/core/domain/common/DomainResult";
+import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
 import { Attachment } from "src/core/domain/invoices/Attachment";
 import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
+import { Page } from "src/core/domain/paged/Page";
 import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
 
 export class EnergyBillInMemRepository implements IEnergyBillRepository {
   async save(energyBill: EnergyBill): Promise<DomainResult<EnergyBill>> {
     return DomainResult.Ok(energyBill);
+  }
+
+  async list(
+    filter: ListEnergyBillFilter,
+  ): Promise<DomainResult<Page<EnergyBill>>> {
+    return DomainResult.Ok([]);
   }
 
   async findById(id: string): Promise<DomainResult<EnergyBill>> {

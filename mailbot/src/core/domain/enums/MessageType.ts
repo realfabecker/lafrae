@@ -1,3 +1,3 @@
 export enum MessageType {
-  EnergyBill = "EnergyBill",
+  EnergyBill = "energy_bill",
 }

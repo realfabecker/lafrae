@@ -14,7 +14,7 @@ export class S3ObjectStorageRepository implements IObjectStorageRepository {
   }: ObjectStorageUploadOpts): Promise<DomainResult<string>> {
     try {
       let config: S3ClientConfig = {
-        region: "us-east-1",
+        region: process.env.AWS_DEFAULT_REGION ?? "us-east-1",
       };
       if (process.env.AWS_ENDPOINT) {
         config = {

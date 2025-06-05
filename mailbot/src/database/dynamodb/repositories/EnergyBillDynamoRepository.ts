@@ -6,22 +6,31 @@ import {
 import {
   DynamoDBDocumentClient,
   GetCommand,
+  QueryCommand,
+  QueryCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { EnergyBillMapper } from "src/adapters/mappers/EnergyBillMapper";
 import { DomainResult } from "src/core/domain/common/DomainResult";
+import { MessageType } from "src/core/domain/enums/MessageType";
 import { MessageAlreadyExists } from "src/core/domain/errors/MessageAlreadyExists";
+import { UnableToListInvoices } from "src/core/domain/errors/UnableToListInvoices";
 import { UnableToCreateInvoice } from "src/core/domain/errors/UnabletToCreateInvoice";
-import { Attachment } from "src/core/domain/invoices/Attachment";
+import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
 import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
+import { Page } from "src/core/domain/paged/Page";
 import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
+import { IJwtProvider } from "src/core/ports/IJwtProvider";
 
 export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
   private readonly client: DynamoDBDocumentClient;
 
-  constructor(private readonly tableName: string) {
+  constructor(
+    private readonly tableName: string,
+    private readonly jwtProvider: IJwtProvider,
+  ) {
     let config: DynamoDBClientConfig = {
-      region: "us-east-1",
+      region: process.env.AWS_DEFAULT_REGION ?? "us-east-1",
     };
     if (process.env.AWS_ENDPOINT) {
       config = {
@@ -49,7 +58,7 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
             Put: {
               Item: {
                 PK: message.getPK(),
-                SK: `message#external_id#${message.getExternalId()}`,
+                SK: `table#${MessageType.EnergyBill}#external_id#${message.getExternalId()}`,
                 MessageSK: message.getSK(),
               },
               ConditionExpression:
@@ -77,6 +86,46 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
     }
   }
 
+  async list(
+    filter: ListEnergyBillFilter,
+  ): Promise<DomainResult<Page<EnergyBill>>> {
+    const query: QueryCommandInput = {
+      TableName: this.tableName,
+      KeyConditionExpression: "PK = :pk and begins_with(SK, :sk)",
+      ScanIndexForward: false,
+      Limit: filter.getLimit(),
+      ExpressionAttributeValues: {
+        ":pk": `app#mailbot#user#${filter.getUserId()}`,
+        ":sk": "table#energy_bill#id#",
+      },
+    };
+
+    if (filter.getPageToken()) {
+      const key = (await this.jwtProvider.verify(
+        filter.getPageToken(),
+      )) as Record<string, any>;
+      query.ExclusiveStartKey = { PK: key?.PK, SK: key?.SK };
+    }
+
+    const command = new QueryCommand(query);
+
+    const result = await this.client.send(command);
+    if (result.$metadata.httpStatusCode !== 200) {
+      return DomainResult.Error(new UnableToListInvoices());
+    }
+
+    const invoices = result.Items?.map((item) =>
+      EnergyBillMapper.fromPersistence(item),
+    );
+
+    const page = Page.fromList({ items: invoices ?? [] });
+    if (result.LastEvaluatedKey) {
+      page.setPageToken(await this.jwtProvider.sign(result.LastEvaluatedKey));
+    }
+
+    return DomainResult.Ok(page);
+  }
+
   async findById(
     userId: string,
     messageId: string,
@@ -86,7 +135,7 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
         TableName: this.tableName,
         Key: {
           PK: `app#mailbot#user#${userId}`,
-          SK: `message#${messageId}`,
+          SK: `table#${MessageType.EnergyBill}#id#${messageId}`,
         },
       });
       const result = await this.client.send(command);
@@ -96,16 +145,10 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
       if (!result.Item) {
         return DomainResult.Ok(null);
       }
+
       return DomainResult.Ok(EnergyBillMapper.fromPersistence(result.Item));
     } catch (e) {
       return DomainResult.Error(<Error>e);
     }
-  }
-
-  async upsertAttachments(
-    id: string,
-    attachments: Attachment[],
-  ): Promise<DomainResult> {
-    return DomainResult.Ok();
   }
 }

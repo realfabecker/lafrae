@@ -12,7 +12,7 @@ custom:
   localstack:
     stages:
       - dev
-    host: http://localhost
+    host: ${env:AWS_ENDPOINT}
     endgePort: 4566
 
 provider:
@@ -21,6 +21,9 @@ provider:
   region: us-east-1
   stage: dev
   profile: localstack
+  memorySize: 128
+  timeout: 15
+  logRetentionInDays: 7
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -46,7 +49,14 @@ functions:
   mailbot-sqs-consumer:
     handler: ./bin/lambda/sqs.handler
     environment:
+      JWT_KEY: ${env:JWT_KEY}
       SQS_QUEUE_URL: { "Fn::GetAtt": ["MailbotSQSQueue", "QueueUrl"] }
+      GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${env:GOOGLE_CLIENT_SECRET}
+      AWS_ENDPOINT: ${env:AWS_ENDPOINT}
+      AWS_DEFAULT_REGION: ${env:AWS_DEFAULT_REGION}
+      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}      
     events:
       - sqs:
           arn: { "Fn::GetAtt": ["MailbotSQSQueue", "Arn" ] }

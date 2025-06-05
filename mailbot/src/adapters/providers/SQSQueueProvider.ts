@@ -11,7 +11,7 @@ export class SQSQueueProvider implements IQueueProvider {
 
   constructor(private readonly queueUrl: string) {
     let config: SQSClientConfig = {
-      region: "us-east-1",
+      region: process.env.AWS_DEFAULT_REGION ?? "us-east-1",
     };
     if (process.env.AWS_ENDPOINT) {
       config = {
@@ -28,10 +28,17 @@ export class SQSQueueProvider implements IQueueProvider {
         QueueUrl: this.queueUrl,
         MessageBody: JSON.stringify(message),
       });
-      await this.client.send(command);
+      const result = await this.client.send(command);
+      if (result.$metadata.httpStatusCode !== 200) {
+        return DomainResult.Error(
+          new Error(`Unable to pub status: ${result.$metadata.httpStatusCode}`),
+        );
+      }
       return DomainResult.Ok();
     } catch (e) {
-      return DomainResult.Error(<Error>e);
+      return DomainResult.Error(
+        new Error(`Unable to pub error: ${(<Error>e).message}`),
+      );
     }
   }
 }

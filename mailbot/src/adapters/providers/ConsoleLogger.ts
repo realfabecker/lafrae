@@ -1,4 +1,5 @@
-import { ILogger } from "src/core/ports/ILogger";
+import axios from "axios";
+import { ILogger, Topic } from "src/core/ports/ILogger";
 import * as winston from "winston";
 
 export class ConsoleLogger implements ILogger {
@@ -34,5 +35,11 @@ export class ConsoleLogger implements ILogger {
 
   private addslashes(str: string): string {
     return (str + "").replace(/\n+/g, "");
+  }
+
+  public async notify(topic: Topic, message: string): Promise<void> {
+    try {
+      await axios.post(topic, message);
+    } catch {}
   }
 }

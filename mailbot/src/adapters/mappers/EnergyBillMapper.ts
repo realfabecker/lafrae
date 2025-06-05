@@ -63,7 +63,7 @@ export class EnergyBillMapper {
   public static toPersistence(energyBill: DomainEnergyBill) {
     return new PersistenceEnergyBill({
       PK: `app#mailbot#user#${energyBill.getUserId()}`,
-      SK: `message#${energyBill.getId()}`,
+      SK: `table#${MessageType.EnergyBill}#id#${energyBill.getId()}`,
       ID: energyBill.getId(),
       ExternalId: energyBill.getExternalId(),
       UserId: energyBill.getUserId(),
@@ -73,7 +73,7 @@ export class EnergyBillMapper {
       CreatedAt: energyBill.getCreatedAt().toISOString(),
       DueDate: energyBill.getDueDate().toISOString(),
       GSI1_PK: `app#mailbot#user#${energyBill.getUserId()}`,
-      GSI1_SK: `message_type#${energyBill.getMessageType()}`,
+      GSI1_SK: `message_type#${MessageType.EnergyBill}`,
       Total: energyBill.getTotal(),
       MessageType: energyBill.getMessageType(),
       Attachments: energyBill.getAttachment().map((x) => x.serialize()),
