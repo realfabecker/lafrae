@@ -17,42 +17,47 @@
 </head>
 <body>
   <script>    
-    const client_id = ""
+    const client_id = "82772367764-093eas00omp6k824dts3i416pp3ou33v.apps.googleusercontent.com"
 
     window.onload = function () {      
       window.addEventListener('message', function(event) {        
-        if(event.origin !== "https://web.oauth.local.com.br") {
-          return;
-        }
+        // if(event.origin !== "https://web.oauth.local.com.br") {
+        //   return;
+        // }
         console.log("Message received from the child: ", event.data, event.origin);
         if(event?.data?.data?.token){
           setPageTokenFromAcessResult(event?.data?.data?.token)
         }
       });
-      setPageTokenFromAcessResult(new URLSearchParams(location.search)?.get("token") ?? null)
-      if(location.href === "https://web.oauth.trunk.com.br/"){
-        createDivElementIframeLoginCallback()
-      }
+      setPageTokenFromAcessResult(
+        new URLSearchParams(location.search)?.get("token") ?? null, 
+        new URLSearchParams(location.search)?.get("access_token") ?? null, 
+        new URLSearchParams(location.search)?.get("refresh_token") ?? null
+      )
+      // if(location.href === "https://web.oauth.trunk.com.br/"){
+      //   createDivElementIframeLoginCallback()
+      // }
     };
 
-    function setPageTokenFromAcessResult(token) {  
-      let data = token ? getDecodedJwtTokenAsString(token) ?? "{}": "{}";    
-      if (!token) {
+    function setPageTokenFromAcessResult(id_token, access_token, refresh_token) {        
+      if (!id_token) {
         document.getElementById("login-request").style.display = "block";
         document.getElementById("login-response").style.display = "none";
         if(document.getElementById("login-iframe")) {
           document.getElementById("login-iframe").style.display = "block"
         }        
       } else {
+        let data = id_token ? getDecodedJwtTokenAsString(id_token) ?? "{}": "{}";    
         if(document.getElementById("login-iframe")) {
           document.getElementById("login-iframe").style.display = "none"
         }
         document.getElementById("login-request").style.display = "none";
-        document.getElementById("login-response").style.display = "block";        
+        document.getElementById("login-response").style.display = "block";
         document.getElementById("login-token-val").innerText = data
-        document.getElementById("login-token-raw").innerText = token
+        document.getElementById("login-token-raw").innerText = id_token
+        document.getElementById("access-token-raw").innerText = access_token
+        document.getElementById("refresh-token-raw").innerText = refresh_token
       }
-      return data;
     }
 
     function getDecodedJwtTokenAsString(token) {      
@@ -65,7 +70,7 @@
     async function handleOnClickSignInWithOpenId() {    
       let url = "";
       try {
-        const data = await (await fetch("https://api.oauth.local.com.br/google/auth-url", {
+        const data = await (await fetch("http://localhost:3100/google/auth-url", {
           method: "POST",        
           headers: {
             "Content-Type": "application/json"
@@ -115,7 +120,7 @@
       google.accounts.id.initialize({
         client_id: client_id,
         ux_mode: "redirect",
-        login_uri: "https://api.oauth.local.com.br/google/callback",
+        login_uri: "http://localhost:3100/google/callback",
       });
       google.accounts.id.renderButton(
         document.getElementById("google-button-redirect"),
@@ -129,7 +134,7 @@
       template.innerHTML = `
         <div id="login-iframe">
           <h3>4. Google Sign In (Iframe)</h3>
-          <iframe style="border:0;" src="https://web.oauth.local.com.br/social?provider=google" title="description"></iframe>  
+          <iframe style="border:0;" src="http://localhost:3000/social?provider=google" title="description"></iframe>  
         </div>
       `
       const node = template.content.firstElementChild
@@ -140,7 +145,7 @@
       const token = document.getElementById("login-token-raw").innerText;
       let data = {}
       try {
-        data = await (await fetch("https://api.oauth.local.com.br/google/verify-id-token", {
+        data = await (await fetch("http://localhost:3100/google/verify-id-token", {
           method: "POST",        
           headers: {
             "Content-Type": "application/json"
@@ -149,11 +154,57 @@
         })).json()
 
       } catch (e) {
-        document.getElementById("login-token-res").innerText= `* Não foi possível validar o token ${e}`
+        document.getElementById("login-token-res").innerHTML= `
+          <div>
+            <strong>Error</strong>
+            * Não foi possível validar o token ${e}
+          </div>
+        `
       }
 
       if(Object.keys(data).length){        
-        document.getElementById("login-token-res").innerText= JSON.stringify(data, null, "   ")
+        document.getElementById("login-token-res").innerHTML= `
+          <div>
+            <strong>Verified</strong>:
+            ${JSON.stringify(data, null, "   ")}
+          </div>`
+      }
+    }
+
+    async function handleOnClickRefreshLoginCredentials() {
+      const token = document.getElementById("refresh-token-raw").innerText;
+      let data = {}
+      try {
+        data = await (await fetch("http://localhost:3100/google/refresh-token", {
+          method: "POST",        
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ refresh_token: token }),
+        })).json()
+
+      } catch (e) {
+        document.getElementById("login-token-res").innerHTML= `
+          <div>
+            <strong>Error</strong>
+            * Não foi possível validar o token ${e}
+          </div>
+        `
+      }
+      
+      if(data.token){
+        setPageTokenFromAcessResult(
+          data.token.id_token, 
+          data.token.access_token, 
+          data.token.refresh_token
+        )
+      } else {
+        document.getElementById("login-token-res").innerHTML= `
+          <div>
+            <strong>Error</strong>
+            * Não foi possível validar o token ${e}
+          </div>
+        `
       }
     }
   </script>
@@ -187,10 +238,43 @@
   <div id="login-response">
     <a style="margin-bottom: 1.5rem; display: block;" href="/">Home</a>
     <div id="login-token">
-      <div id="login-token-val"></div>  
-      <div id="login-token-raw"></div>  
-      <button style="max-width: 250px; margin-top: 1.5rem;" onclick="handleOnClickVerifyLoginCredentials()">Verify</button>
-      <div id="login-token-res"></div>  
+      <div>
+        <strong>Access Token (raw)</strong>:
+        <div id="access-token-raw"></div>  
+      </div>
+
+      <br />
+
+      <div>
+        <strong>Refresh Token (raw)</strong>:
+        <div id="refresh-token-raw"></div>  
+      </div>
+
+      <br />
+
+      <div>
+        <strong>Id Token (raw)</strong>:
+        <div id="login-token-raw"></div>  
+      </div>
+
+      <br />
+
+      <div>
+        <strong>Id Token (decoded)</strong>:
+        <div id="login-token-val"></div>
+      </div>
+      
+      <button style="max-width: 250px; margin-top: 1.5rem;"
+       onclick="handleOnClickVerifyLoginCredentials()">
+        Verify
+      </button>
+
+      <button style="max-width: 250px; margin-top: 1.5rem;"
+       onclick="handleOnClickRefreshLoginCredentials()">
+        Refresh
+      </button>
+
+      <div id="login-token-res"></div>
     </div>
   </div>
 </body>

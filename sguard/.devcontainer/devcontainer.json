@@ -1,8 +1,8 @@
 {
     "name": "typescript",
     "dockerComposeFile": "../docker-compose.yml",
-    "workspaceFolder": "/home/nonroot/app",
-    "service": "typescript",
+    "workspaceFolder": "/app",
+    "service": "development",
     "customizations": {
       "vscode": {
         "extensions": [          
