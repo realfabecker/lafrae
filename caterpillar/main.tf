@@ -47,8 +47,8 @@ module "lambda_auth3" {
   function_name = "auth3"
   entrypoint    = "bootstrap"
 
-  zip_source_file = "./projects/auth3/backend/out/bootstrap"
-  zip_output_path = "./projects/auth3/backend/out"
+  zip_source_file = "../../auth3/auth3/backend/out/bootstrap"
+  zip_output_path = "../../auth3/auth3/backend/out"
   zip_file_name   = "lambda_backend_handler.zip"
 
   environment = {
