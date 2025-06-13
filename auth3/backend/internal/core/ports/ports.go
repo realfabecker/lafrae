@@ -13,9 +13,10 @@ type HttpHandler interface {
 }
 
 type AuthService interface {
-	Login(email string, password string) (*cordom.UserToken, error)
+	Login(dto cordom.UserLoginDTO) (*cordom.UserLoginResponseDTO, error)
 	Forgot(email string) (*cordom.CodeDeliveryDetails, error)
 	Change(email string, newPassword string, passwordResetCode string) error
+	Respond(dto cordom.UserLoginDTO) (*cordom.UserLoginResponseDTO, error)
 }
 
 type JwkHandler interface {

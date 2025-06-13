@@ -2,8 +2,9 @@ package http
 
 import (
 	"errors"
-	"github.com/gofiber/fiber/v2"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -23,11 +24,11 @@ type Handler struct {
 	authController *routes.AuthController
 }
 
-//	@title			Auth3 Rest API
-//	@version		1.0
-//	@description	Auth3 Rest API
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+// @title			Auth3 Rest API
+// @version		1.0
+// @description	Auth3 Rest API
+// @license.name	Apache 2.0
+// @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 func NewFiberHandler(
 	appConfig *cordom.Config,
 	authController *routes.AuthController,

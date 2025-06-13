@@ -26,9 +26,18 @@ type UserToken struct {
 	AccessToken  *string `json:"AccessToken,omitempty"`
 } // @name	UserToken
 
+type UserLoginResponseDTO struct {
+	UserToken     *UserToken `json:"UserToken,omitempty"`
+	Session       *string    `json:"Session,omitempty"`
+	ChallengeName *string    `json:"ChallengeName,omitempty"`
+} // @name UserLoginResponseDTO
+
 type UserLoginDTO struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=6"`
+	Email      string            `json:"email" validate:"required,email"`
+	Password   string            `json:"password" validate:"required,min=6"`
+	Challenge  string            `json:"challenge,omitempty"`
+	Parameters map[string]string `json:"parameters,omitempty"`
+	Session    string            `json:"session,omitempty"`
 } // @name	UserLoginDTO
 
 type UserLoginForgotDTO struct {
@@ -44,3 +53,8 @@ type UserLoginChangeDTO struct {
 type CodeDeliveryDetails struct {
 	DeliveryMedium string `json:"deliveryMedium"`
 } // @name CodeDeliveryDetails
+
+type UserLoginChallengeDTO struct {
+	Challenge string `json:"challenge"`
+	Session   string `json:"session"`
+} // @name UserLoginChallangeDTO

@@ -39,14 +39,38 @@ func (w *AuthController) Login(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	token, err := w.authSrv.Login(q.Email, q.Password)
-	if err != nil {
-		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
+	var token *cordom.UserLoginResponseDTO
+	var err error
+
+	if q.Challenge != "" {
+		token, err = w.authSrv.Respond(q)
+		if err != nil {
+			return fiber.NewError(fiber.StatusUnauthorized, err.Error())
+		}
+	} else {
+		token, err = w.authSrv.Login(q)
+		if err != nil {
+			return fiber.NewError(fiber.StatusUnauthorized, err.Error())
+		}
+	}
+
+	if token.ChallengeName != nil {
+		return c.JSON(cordom.ResponseDTO[cordom.UserLoginChallengeDTO]{
+			Status: "success",
+			Data: &cordom.UserLoginChallengeDTO{
+				Challenge: *token.ChallengeName,
+				Session:   *token.Session,
+			},
+		})
+	}
+
+	if token.UserToken == nil {
+		return fiber.NewError(fiber.StatusUnauthorized)
 	}
 
 	return c.JSON(cordom.ResponseDTO[cordom.UserToken]{
 		Status: "success",
-		Data:   token,
+		Data:   token.UserToken,
 	})
 }
 
