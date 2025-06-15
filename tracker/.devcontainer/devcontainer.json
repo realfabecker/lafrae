@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.194.3/containers/docker-existing-dockerfile
 {
   "name": "wallet",
-  "dockerFile": "./Dockerfile",
+  "dockerFile": "../Dockerfile",
   "remoteUser": "gopher",
   "workspaceFolder": "/home/gopher/src/wallet",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/gopher/src/wallet,type=bind,consistency=cached",
