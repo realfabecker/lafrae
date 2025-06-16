@@ -20,31 +20,19 @@ func NewMediaController(
 
 // GetUploadUrl get a photo upload url
 //
-//	@Summary		Get upload url
-//	@Description	Get upload url
+//	@Summary		Generate upload url
+//	@Description	Geberate upload url
 //	@Tags			Bucket
 //	@Security		ApiKeyAuth
 //	@Produce		json
-//	@Param			file		query		string	true	"FileName"
-//	@Param			contentType	query		string	true	"ContentType"
-//	@Param			keyPrefix	path		string	true	"Key prefix"
+//	@Param			request		body		cordom.GenerateUploadUrlDTO		true	"Upload Payload"
 //	@Success		200			{object}	cordom.ResponseDTO[cordom.MidiaUpload]
 //	@Failure		400
 //	@Failure		500
-//	@Router			/buck3t/{keyPrefix}/upload-url [get]
-func (w *MediaController) GetUploadUrl(c *fiber.Ctx) error {
-	q := struct {
-		ContentType string `json:"contentType" query:"contentType" validate:"required"`
-		File        string `json:"file" query:"file" validate:"required,imagex_name"`
-	}{}
-	if err := c.QueryParser(&q); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	p := struct {
-		KeyPrefix string `json:"keyPrefix" query:"keyPrefix" validate:"required"`
-	}{}
-	if err := c.ParamsParser(&p); err != nil {
+//	@Router			/buck3t/upload-url [post]
+func (w *MediaController) GenerateUploadUrl(c *fiber.Ctx) error {
+	b := cordom.GenerateUploadUrlDTO{}
+	if err := c.BodyParser(&b); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
@@ -53,7 +41,7 @@ func (w *MediaController) GetUploadUrl(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	if err := v.StructPartial(q, "File"); err != nil {
+	if err := v.Struct(b); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
@@ -62,10 +50,10 @@ func (w *MediaController) GetUploadUrl(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.ErrUnauthorized.Code)
 	}
 
-	url, err := w.service.GetUploadUrl(user.Subject, p.KeyPrefix, q.File, q.ContentType)
+	url, err := w.service.GetUploadUrl(user.Subject, b.KeyPrefix, b.FileName, b.ContentType)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
-	} else if url == "" && err == nil {
+	} else if url == "" {
 		return fiber.NewError(fiber.StatusBadRequest)
 	}
 

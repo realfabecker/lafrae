@@ -2,8 +2,9 @@ package http
 
 import (
 	"errors"
-	"github.com/gofiber/fiber/v2"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -24,15 +25,15 @@ type Handler struct {
 	authJwkService  corpts.AuthJwkService
 }
 
-//	@title						Buck3t Rest API
-//	@version					1.0
-//	@description				Buck3t Rest API
-//	@license.name				Apache 2.0
-//	@license.url				http://www.apache.org/licenses/LICENSE-2.0.html
-//	@securityDefinitions.apikey	ApiKeyAuth
-//	@in							header
-//	@name						Authorization
-//	@description				Type 'Bearer ' and than your API token
+// @title						Buck3t Rest API
+// @version					1.0
+// @description				Buck3t Rest API
+// @license.name				Apache 2.0
+// @license.url				http://www.apache.org/licenses/LICENSE-2.0.html
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description				Type 'Bearer ' and than your API token
 func NewFiberHandler(
 	appConfig *cordom.Config,
 	mediaController *routes.MediaController,
@@ -94,7 +95,7 @@ func (a *Handler) Register() error {
 	bucket.Get("/status", a.mediaController.Healthcheck)
 
 	bucket.Use(a.authHandler)
-	bucket.Get("/:keyPrefix/upload-url", a.mediaController.GetUploadUrl)
+	bucket.Post("/upload-url", a.mediaController.GenerateUploadUrl)
 	return nil
 }
 

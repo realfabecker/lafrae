@@ -36,3 +36,9 @@ type PagedDTOQuery struct {
 type MidiaUpload struct {
 	Url string `json:"url" example:"https://images.com.br/image.jpg"`
 } // @name MidiaUpload
+
+type GenerateUploadUrlDTO struct {
+	ContentType string `json:"contentType,omitempty" validate:"required"`
+	FileName    string `json:"fileName,omitempty" validate:"required"`
+	KeyPrefix   string `json:"keyPrefix,omitempty" validate:"required"`
+} // @name	GGenerateUploadUrlDTO
