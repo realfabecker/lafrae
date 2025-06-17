@@ -44,7 +44,7 @@ commands:
                   aws --profile localstack sqs \
                       send-message \
                       --queue-url http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/mailbot \
-                      --message-body '{"meta": {"operation": "ImportMessageDetails"}, "data": { "userId": "01972d36-00b7-7617-b9e5-f228a0545ec2", "crawlerId": "faturas-celesc", "messageId": "1970cbeb69114f7a"}}'
+                      --message-body '{"meta": {"operation": "ImportMessageDetails"}, "data": { "userId": "868d9ff5-e61f-4c82-ac09-97d20562ac77", "crawlerId": "faturas-celesc", "messageId": "1970cbeb69114f7a"}}'
               fi
 
               if [[ "{{.GetFlag "operation"}}" == "schedule:import" ]]; then
@@ -52,7 +52,7 @@ commands:
                   aws --profile localstack sqs \
                       send-message \
                       --queue-url http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/mailbot \
-                      --message-body '{"meta": {"operation": "ScheduleMessageImport"}, "data": { "userId": "01972d36-00b7-7617-b9e5-f228a0545ec2", "crawlerId": "faturas-celesc"}}'
+                      --message-body '{"meta": {"operation": "ScheduleMessageImport"}, "data": { "userId": "868d9ff5-e61f-4c82-ac09-97d20562ac77", "crawlerId": "faturas-celesc"}}'
               fi
           - name: "lambda-logs"
             short: "lambda logs"
@@ -62,5 +62,4 @@ commands:
             short: "delte item"
             cmd: |
                aws --profile localstack dynamodb delete-item --table-name sintese \
-                --key '{"PK": {"S": "app#mailbot#user#01972d36-00b7-7617-b9e5-f228a0545ec2"}, "SK": {"S": "message#01974bb6-5f6f-713c-ba0e-e0e8bd9899cf"}}'
-            
+                --key '{"PK": {"S": "app#mailbot#user#868d9ff5-e61f-4c82-ac09-97d20562ac77"}, "SK": {"S": "message#01974bb6-5f6f-713c-ba0e-e0e8bd9899cf"}}'

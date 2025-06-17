@@ -12,7 +12,7 @@ export class GoogleLoginCommand {
       builder: (yargs) => {
         yargs.option("user-id", {
           demandOption: false,
-          default: "01972d36-00b7-7617-b9e5-f228a0545ec2",
+          default: "868d9ff5-e61f-4c82-ac09-97d20562ac77",
         });
         yargs.option("client-id", {
           demandOption: false,

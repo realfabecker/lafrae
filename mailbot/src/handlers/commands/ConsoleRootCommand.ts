@@ -1,6 +1,5 @@
 import yargs from "yargs";
 import { GoogleLoginCommand } from "./GoogleLoginCommand";
-import { DevSandboxCommand } from "./DevSandboxCommand";
 
 export class ConsoleRootCommand {
   public async run(): Promise<void> {
@@ -8,7 +7,6 @@ export class ConsoleRootCommand {
       await yargs(process.argv.slice(2))
         .usage("Usage $0 [options]")
         .command(GoogleLoginCommand.Command())
-        .command(DevSandboxCommand.Command())
         .demandCommand()
         .parseAsync();
     } catch (e) {

@@ -5,8 +5,8 @@ export type EnergyBillOpts = {
   PK: string;
   SK: string;
   ID: string;
-  GSI1_PK: string;
-  GSI1_SK: string;
+  GSI1_PK?: string;
+  GSI1_SK?: string;
   Total: number;
   CreatedAt: string;
   DueDate: string;

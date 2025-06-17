@@ -2,7 +2,8 @@
   "name": "@sintese/nosferatu",
   "private": true,
   "scripts": {
-    "mailbot": "npx ts-node ./bin/cmd/cmd.ts",        
+    "mailbot:cmd": "npx ts-node ./bin/cmd/cmd.ts",
+    "mailbot:api": "npx ts-node ./bin/api/api.ts",
     "build": "tsc -b ./tsconfig.json && cp ./tsconfig.json ./build",
     "prepare": "husky"
   },

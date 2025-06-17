@@ -1,5 +1,6 @@
 import { HttpStatusCode } from "axios";
 import { Request, Response, Router } from "express";
+import { IRequest } from "src/core/domain/common/Request";
 import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
 
 import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
@@ -13,13 +14,12 @@ export class EnergyBillHttpController {
     return router;
   }
 
-  private async list(req: Request, res: Response) {
+  private async list(req: IRequest, res: Response) {
     const response = await this.energyBillRepository.list(
       new ListEnergyBillFilter({
-        userId: "01972d36-00b7-7617-b9e5-f228a0545ec2",
+        userId: req.user?.username!,
       }),
     );
-
     if (!response.isSuccess()) {
       res.status(HttpStatusCode.BadRequest).send();
     } else {

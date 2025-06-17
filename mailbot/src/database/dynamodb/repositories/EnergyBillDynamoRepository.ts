@@ -58,7 +58,7 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
             Put: {
               Item: {
                 PK: message.getPK(),
-                SK: `table#${MessageType.EnergyBill}#external_id#${message.getExternalId()}`,
+                SK: `table#messages#message_type#${MessageType.EnergyBill}#external_id#${message.getExternalId()}`,
                 MessageSK: message.getSK(),
               },
               ConditionExpression:
@@ -96,7 +96,7 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
       Limit: filter.getLimit(),
       ExpressionAttributeValues: {
         ":pk": `app#mailbot#user#${filter.getUserId()}`,
-        ":sk": "table#energy_bill#id#",
+        ":sk": "table#messages#message_type#energy_bill#id#",
       },
     };
 
@@ -135,7 +135,7 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
         TableName: this.tableName,
         Key: {
           PK: `app#mailbot#user#${userId}`,
-          SK: `table#${MessageType.EnergyBill}#id#${messageId}`,
+          SK: `table#messages#message_type#${MessageType.EnergyBill}#id#${messageId}`,
         },
       });
       const result = await this.client.send(command);
@@ -145,7 +145,6 @@ export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
       if (!result.Item) {
         return DomainResult.Ok(null);
       }
-
       return DomainResult.Ok(EnergyBillMapper.fromPersistence(result.Item));
     } catch (e) {
       return DomainResult.Error(<Error>e);
