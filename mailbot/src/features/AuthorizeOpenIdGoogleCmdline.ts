@@ -1,8 +1,8 @@
-import { GoogleOpenIdProvider } from "src/adapters/providers/GoogleOpenIdProvider";
+import { GoogleOpenIdProvider } from "../../src/adapters/providers/GoogleOpenIdProvider";
 import express, { Request, Response } from "express";
-import { OpenIdAuth } from "src/core/domain/auth/OpenIdAuth";
-import { IOpenIdAuthRepository } from "src/core/ports/IOpenIdAuthRepository";
-import { DomainResult } from "src/core/domain/common/DomainResult";
+import { OpenIdAuth } from "../../src/core/domain/auth/OpenIdAuth";
+import { IOpenIdAuthRepository } from "../../src/core/ports/IOpenIdAuthRepository";
+import { DomainResult } from "../../src/core/domain/common/DomainResult";
 import { HttpStatusCode } from "axios";
 
 export class AuthorizaOpenIdGoogleCmdline {

@@ -1,8 +1,8 @@
 import { HttpStatusCode } from "axios";
 import { Response, NextFunction } from "express";
-import { UserToken } from "src/core/domain/auth/UserToken";
-import { IRequest } from "src/core/domain/common/Request";
-import { IJwtProvider } from "src/core/ports/IJwtProvider";
+import { UserToken } from "../../../core/domain/auth/UserToken";
+import { IRequest } from "../../../core/domain/common/Request";
+import { IJwtProvider } from "../../../core/ports/IJwtProvider";
 
 export class DefaultAuthHandler {
   constructor(private readonly jwtProvider: IJwtProvider) {}

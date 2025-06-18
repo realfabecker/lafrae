@@ -1,5 +1,5 @@
-import { AbstractModel } from "src/core/domain/common/AbstractModel";
-import { MessageType } from "src/core/domain/enums/MessageType";
+import { AbstractModel } from "../../../../src/core/domain/common/AbstractModel";
+import { MessageType } from "../../../../src/core/domain/enums/MessageType";
 
 export type EnergyBillOpts = {
   PK: string;

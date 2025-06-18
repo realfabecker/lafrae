@@ -1,6 +1,6 @@
 import { parseISO } from "date-fns";
-import { OpenIdAuth as DomainOpenIdAuth } from "src/core/domain/auth/OpenIdAuth";
-import { OpenIdAuth as PersistenceOpenIdAuth } from "src/database/dynamodb/entities/OpenIdAuth";
+import { OpenIdAuth as DomainOpenIdAuth } from "../../../src/core/domain/auth/OpenIdAuth";
+import { OpenIdAuth as PersistenceOpenIdAuth } from "../../../src/database/dynamodb/entities/OpenIdAuth";
 
 export class OpenIdAuthMappter {
   public static fromPersistence(openIdAuth: Record<string, any>) {

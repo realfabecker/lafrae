@@ -1,13 +1,13 @@
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { EmailListFilter } from "src/core/domain/email/EmailListFilter";
-import { EmailMessage } from "src/core/domain/email/EmailMessage";
-import { CrawlerDoesNotExists } from "src/core/domain/errors/CrawlerDoesNotExists";
-import { OperationMessage } from "src/core/domain/messages/OperationMessage";
-import { IMessageCrawlerConfigRepository } from "src/core/ports/ICrawlerRepository";
-import { IEmailMessageProvider } from "src/core/ports/IEmailMessageProvider";
-import { ILogger } from "src/core/ports/ILogger";
-import { IOpenIdAuthProvider } from "src/core/ports/IOpenIdAuthProvider";
-import { IQueueProvider } from "src/core/ports/IQueueProvider";
+import { DomainResult } from "../../src/core/domain/common/DomainResult";
+import { EmailListFilter } from "../../src/core/domain/email/EmailListFilter";
+import { EmailMessage } from "../../src/core/domain/email/EmailMessage";
+import { CrawlerDoesNotExists } from "../../src/core/domain/errors/CrawlerDoesNotExists";
+import { OperationMessage } from "../../src/core/domain/messages/OperationMessage";
+import { IMessageCrawlerConfigRepository } from "../../src/core/ports/ICrawlerRepository";
+import { IEmailMessageProvider } from "../../src/core/ports/IEmailMessageProvider";
+import { ILogger } from "../../src/core/ports/ILogger";
+import { IOpenIdAuthProvider } from "../../src/core/ports/IOpenIdAuthProvider";
+import { IQueueProvider } from "../../src/core/ports/IQueueProvider";
 
 type ScheduleMessageTypeImportOpts = {
   openIdProvider: IOpenIdAuthProvider;

@@ -1,12 +1,12 @@
-import { EmailMessageMapper } from "src/adapters/mappers/EmailMessageMapper";
-import { ErrorResultMapper } from "src/adapters/mappers/ErrorResultMapper";
+import { EmailMessageMapper } from "../../../src/adapters/mappers/EmailMessageMapper";
+import { ErrorResultMapper } from "../../../src/adapters/mappers/ErrorResultMapper";
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { EmailListFilter } from "src/core/domain/email/EmailListFilter";
-import { EmailMessage } from "src/core/domain/email/EmailMessage";
-import { GoogleEmailMessage } from "src/core/domain/google/GoogleEmailMessage";
-import { GoogleError } from "src/core/domain/google/GoogleError";
-import { IEmailMessageProvider } from "src/core/ports/IEmailMessageProvider";
+import { DomainResult } from "../../../src/core/domain/common/DomainResult";
+import { EmailListFilter } from "../../../src/core/domain/email/EmailListFilter";
+import { EmailMessage } from "../../../src/core/domain/email/EmailMessage";
+import { GoogleEmailMessage } from "../../../src/core/domain/google/GoogleEmailMessage";
+import { GoogleError } from "../../../src/core/domain/google/GoogleError";
+import { IEmailMessageProvider } from "../../../src/core/ports/IEmailMessageProvider";
 
 export class GoogleEmailMessageProvider implements IEmailMessageProvider {
   private readonly client: AxiosInstance;

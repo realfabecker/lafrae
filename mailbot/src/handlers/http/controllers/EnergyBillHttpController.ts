@@ -1,9 +1,8 @@
 import { HttpStatusCode } from "axios";
-import { Request, Response, Router } from "express";
-import { IRequest } from "src/core/domain/common/Request";
-import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
-
-import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
+import { Response, Router } from "express";
+import { IRequest } from "../../../core/domain/common/Request";
+import { ListEnergyBillFilter } from "../../../core/domain/filters/ListEnergyBillFilter";
+import { IEnergyBillRepository } from "../../../core/ports/IEnergyBillRepository";
 
 export class EnergyBillHttpController {
   constructor(private readonly energyBillRepository: IEnergyBillRepository) {}

@@ -1,4 +1,4 @@
-import { AbstractModel } from "src/core/domain/common/AbstractModel";
+import { AbstractModel } from "../../../../src/core/domain/common/AbstractModel";
 
 export type OpenIdAuthOpts = {
   PK: string;

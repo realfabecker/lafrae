@@ -1,6 +1,6 @@
-import { EmailAttachment } from "src/core/domain/email/EmailAttachment";
-import { EmailMessage } from "src/core/domain/email/EmailMessage";
-import { GoogleEmailMessage } from "src/core/domain/google/GoogleEmailMessage";
+import { EmailAttachment } from "../../../src/core/domain/email/EmailAttachment";
+import { EmailMessage } from "../../../src/core/domain/email/EmailMessage";
+import { GoogleEmailMessage } from "../../../src/core/domain/google/GoogleEmailMessage";
 
 export class EmailMessageMapper {
   static fromGoogle(message: GoogleEmailMessage): EmailMessage {

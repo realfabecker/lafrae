@@ -1,8 +1,8 @@
 import yargs from "yargs";
-import { GoogleOpenIdProvider } from "src/adapters/providers/GoogleOpenIdProvider";
-import { OpenIdAuthDynamoRepository } from "src/database/dynamodb/repositories/OpenIdAuthDynamoRepository";
-import { AuthorizaOpenIdGoogleCmdline } from "src/features/AuthorizeOpenIdGoogleCmdline";
-import { ConsoleLogger } from "src/adapters/providers/ConsoleLogger";
+import { GoogleOpenIdProvider } from "../../../src/adapters/providers/GoogleOpenIdProvider";
+import { OpenIdAuthDynamoRepository } from "../../../src/database/dynamodb/repositories/OpenIdAuthDynamoRepository";
+import { AuthorizaOpenIdGoogleCmdline } from "../../../src/features/AuthorizeOpenIdGoogleCmdline";
+import { ConsoleLogger } from "../../../src/adapters/providers/ConsoleLogger";
 
 export class GoogleLoginCommand {
   static Command(): yargs.CommandModule {

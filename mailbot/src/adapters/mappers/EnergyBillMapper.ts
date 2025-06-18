@@ -1,11 +1,11 @@
-import { EmailMessage } from "src/core/domain/email/EmailMessage";
-import { EnergyBill as DomainEnergyBill } from "src/core/domain/invoices/EnergyBill";
-import { EnergyBill as PersistenceEnergyBill } from "src/database/dynamodb/entities/EnergyBill";
-import { Attachment } from "src/core/domain/invoices/Attachment";
 import { parse, parseISO } from "date-fns";
 import { v7 as uuidv7 } from "uuid";
-import { MessageType } from "src/core/domain/enums/MessageType";
 import crypto from "node:crypto";
+import { EmailMessage } from "../../../src/core/domain/email/EmailMessage";
+import { EnergyBill as DomainEnergyBill } from "../../../src/core/domain/invoices/EnergyBill";
+import { EnergyBill as PersistenceEnergyBill } from "../../../src/database/dynamodb/entities/EnergyBill";
+import { Attachment } from "../../../src/core/domain/invoices/Attachment";
+import { MessageType } from "../../../src/core/domain/enums/MessageType";
 
 export class EnergyBillMapper {
   static fromPayload(

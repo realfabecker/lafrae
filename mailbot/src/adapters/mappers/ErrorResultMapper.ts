@@ -1,6 +1,6 @@
-import { DomainError } from "src/core/domain/common/DomainError";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { GoogleError } from "src/core/domain/google/GoogleError";
+import { DomainError } from "../../../src/core/domain/common/DomainError";
+import { DomainResult } from "../../../src/core/domain/common/DomainResult";
+import { GoogleError } from "../../../src/core/domain/google/GoogleError";
 
 export class ErrorResultMapper {
   static fromGoogle(error: GoogleError) {

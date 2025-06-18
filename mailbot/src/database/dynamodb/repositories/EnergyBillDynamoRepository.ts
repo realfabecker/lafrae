@@ -10,17 +10,17 @@ import {
   QueryCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { EnergyBillMapper } from "src/adapters/mappers/EnergyBillMapper";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { MessageType } from "src/core/domain/enums/MessageType";
-import { MessageAlreadyExists } from "src/core/domain/errors/MessageAlreadyExists";
-import { UnableToListInvoices } from "src/core/domain/errors/UnableToListInvoices";
-import { UnableToCreateInvoice } from "src/core/domain/errors/UnabletToCreateInvoice";
-import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
-import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
-import { Page } from "src/core/domain/paged/Page";
-import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
-import { IJwtProvider } from "src/core/ports/IJwtProvider";
+import { EnergyBillMapper } from "../../../../src/adapters/mappers/EnergyBillMapper";
+import { DomainResult } from "../../../../src/core/domain/common/DomainResult";
+import { MessageType } from "../../../../src/core/domain/enums/MessageType";
+import { MessageAlreadyExists } from "../../../../src/core/domain/errors/MessageAlreadyExists";
+import { UnableToListInvoices } from "../../../../src/core/domain/errors/UnableToListInvoices";
+import { UnableToCreateInvoice } from "../../../../src/core/domain/errors/UnabletToCreateInvoice";
+import { ListEnergyBillFilter } from "../../../../src/core/domain/filters/ListEnergyBillFilter";
+import { EnergyBill } from "../../../../src/core/domain/invoices/EnergyBill";
+import { Page } from "../../../../src/core/domain/paged/Page";
+import { IEnergyBillRepository } from "../../../../src/core/ports/IEnergyBillRepository";
+import { IJwtProvider } from "../../../../src/core/ports/IJwtProvider";
 
 export class EnergyBillDynamoDbRepository implements IEnergyBillRepository {
   private readonly client: DynamoDBDocumentClient;

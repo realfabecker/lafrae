@@ -1,16 +1,16 @@
 import { SQSBatchItemFailure, SQSEvent } from "aws-lambda";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { OperationType } from "src/core/domain/enums/OperationType";
+import { DomainResult } from "../../core/domain/common/DomainResult";
+import { OperationType } from "../../core/domain/enums/OperationType";
 import {
   ImportMessageAttachmentMessage,
   ImportMessageTypeDetailsMessage,
   MessageMeta,
   ScheduleMessageTypeImportMessage,
-} from "src/core/domain/schemas/ImportMessage";
-import { ILogger } from "src/core/ports/ILogger";
-import { ImportMessageAttachment } from "src/features/ImportMessageAttachment";
-import { ImportMessageTypeDetails } from "src/features/ImportMessageTypeDetails";
-import { ScheduleMessageTypeImport } from "src/features/ScheduleMessageTypeImport";
+} from "../../core/domain/schemas/ImportMessage";
+import { ILogger } from "../../core/ports/ILogger";
+import { ImportMessageAttachment } from "../../features/ImportMessageAttachment";
+import { ImportMessageTypeDetails } from "../../features/ImportMessageTypeDetails";
+import { ScheduleMessageTypeImport } from "../../features/ScheduleMessageTypeImport";
 import { ZodError } from "zod";
 
 export class SqsAsEventSourceHandler {

@@ -1,13 +1,13 @@
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { CrawlerDoesNotExists } from "src/core/domain/errors/CrawlerDoesNotExists";
-import { Attachment } from "src/core/domain/invoices/Attachment";
-import { EnergyBill } from "src/core/domain/invoices/EnergyBill";
-import { IMessageCrawlerConfigRepository } from "src/core/ports/ICrawlerRepository";
-import { IEmailMessageProvider } from "src/core/ports/IEmailMessageProvider";
-import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
-import { ILogger } from "src/core/ports/ILogger";
-import { IObjectStorageRepository } from "src/core/ports/IObjectStorageRepository";
-import { IOpenIdAuthProvider } from "src/core/ports/IOpenIdAuthProvider";
+import { DomainResult } from "../../src/core/domain/common/DomainResult";
+import { CrawlerDoesNotExists } from "../../src/core/domain/errors/CrawlerDoesNotExists";
+import { Attachment } from "../../src/core/domain/invoices/Attachment";
+import { EnergyBill } from "../../src/core/domain/invoices/EnergyBill";
+import { IMessageCrawlerConfigRepository } from "../../src/core/ports/ICrawlerRepository";
+import { IEmailMessageProvider } from "../../src/core/ports/IEmailMessageProvider";
+import { IEnergyBillRepository } from "../../src/core/ports/IEnergyBillRepository";
+import { ILogger } from "../../src/core/ports/ILogger";
+import { IObjectStorageRepository } from "../../src/core/ports/IObjectStorageRepository";
+import { IOpenIdAuthProvider } from "../../src/core/ports/IOpenIdAuthProvider";
 
 export class ImportMessageAttachment {
   public constructor(

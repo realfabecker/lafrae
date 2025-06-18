@@ -1,15 +1,15 @@
-import { EnergyBillMapper } from "src/adapters/mappers/EnergyBillMapper";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { CrawlerDoesNotExists } from "src/core/domain/errors/CrawlerDoesNotExists";
-import { NotEnoughtMessageDetails } from "src/core/domain/errors/NotEnoughMessageDetails";
-import { OperationMessage } from "src/core/domain/messages/OperationMessage";
-import { IMessageCrawlerConfigRepository } from "src/core/ports/ICrawlerRepository";
-import { IEmailMessageProvider } from "src/core/ports/IEmailMessageProvider";
-import { IEnergyBillRepository } from "src/core/ports/IEnergyBillRepository";
-import { ILogger } from "src/core/ports/ILogger";
-import { IMessageDetailExtractor } from "src/core/ports/IMessageDetailExtractor";
-import { IOpenIdAuthProvider } from "src/core/ports/IOpenIdAuthProvider";
-import { IQueueProvider } from "src/core/ports/IQueueProvider";
+import { EnergyBillMapper } from "../../src/adapters/mappers/EnergyBillMapper";
+import { DomainResult } from "../../src/core/domain/common/DomainResult";
+import { CrawlerDoesNotExists } from "../../src/core/domain/errors/CrawlerDoesNotExists";
+import { NotEnoughtMessageDetails } from "../../src/core/domain/errors/NotEnoughMessageDetails";
+import { OperationMessage } from "../../src/core/domain/messages/OperationMessage";
+import { IMessageCrawlerConfigRepository } from "../../src/core/ports/ICrawlerRepository";
+import { IEmailMessageProvider } from "../../src/core/ports/IEmailMessageProvider";
+import { IEnergyBillRepository } from "../../src/core/ports/IEnergyBillRepository";
+import { ILogger } from "../../src/core/ports/ILogger";
+import { IMessageDetailExtractor } from "../../src/core/ports/IMessageDetailExtractor";
+import { IOpenIdAuthProvider } from "../../src/core/ports/IOpenIdAuthProvider";
+import { IQueueProvider } from "../../src/core/ports/IQueueProvider";
 
 type ImportMessageTypeDetailsOpts = {
   openIdProvider: IOpenIdAuthProvider;

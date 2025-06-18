@@ -7,6 +7,7 @@ useDotenv: true
 plugins:
   - serverless-localstack
   - serverless-plugin-typescript
+  - serverless-offline
 
 custom:
   localstack:
@@ -46,7 +47,27 @@ provider:
         - { "Fn::GetAtt": ["MailbotSQSQueue", "Arn" ] }
 
 functions:
-  mailbot-sqs-consumer:
+  mailapi:
+    handler: ./bin/lambda/api.handler
+    environment:
+      JWT_KEY: ${env:JWT_KEY}                
+      AWS_ENDPOINT: ${env:AWS_ENDPOINT}
+      AWS_DEFAULT_REGION: ${env:AWS_DEFAULT_REGION}
+      AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}      
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+          private: true
+      - http:
+          path: /{any+}
+          method: ANY
+          cors: true
+          private: true
+
+  mailsqs:
     handler: ./bin/lambda/sqs.handler
     environment:
       JWT_KEY: ${env:JWT_KEY}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ILogger, Topic } from "src/core/ports/ILogger";
+import { ILogger, Topic } from "../../../src/core/ports/ILogger";
 import * as winston from "winston";
 
 export class ConsoleLogger implements ILogger {

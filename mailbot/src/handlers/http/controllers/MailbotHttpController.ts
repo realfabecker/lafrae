@@ -1,10 +1,10 @@
 import express from "express";
 
-import { EnergyBillHttpController } from "src/handlers/http/controllers/EnergyBillHttpController";
+import { EnergyBillHttpController } from "./EnergyBillHttpController";
 import { DefaultErrorHandler } from "../middlewares/DefaultErrorHandler";
 import { DefaultAuthHandler } from "../middlewares/DefaultAuthHandler";
-import { EnergyBillDynamoDbRepository } from "src/database/dynamodb/repositories/EnergyBillDynamoRepository";
-import { JwtProvider } from "src/adapters/providers/JwtProvider";
+import { JwtProvider } from "../../../adapters/providers/JwtProvider";
+import { EnergyBillDynamoDbRepository } from "../../../database/dynamodb/repositories/EnergyBillDynamoRepository";
 
 export class MailbotHttpController {
   constructor(

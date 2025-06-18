@@ -5,11 +5,11 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-import { OpenIdAuthMappter } from "src/adapters/mappers/OpenIdAuthMapper";
-import { OpenIdAuth } from "src/core/domain/auth/OpenIdAuth";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { UnableToCreateOpenId } from "src/core/domain/errors/UnableToCreateOpenId";
-import { IOpenIdAuthRepository } from "src/core/ports/IOpenIdAuthRepository";
+import { OpenIdAuthMappter } from "../../../../src/adapters/mappers/OpenIdAuthMapper";
+import { OpenIdAuth } from "../../../../src/core/domain/auth/OpenIdAuth";
+import { DomainResult } from "../../../../src/core/domain/common/DomainResult";
+import { UnableToCreateOpenId } from "../../../../src/core/domain/errors/UnableToCreateOpenId";
+import { IOpenIdAuthRepository } from "../../../../src/core/ports/IOpenIdAuthRepository";
 
 export class OpenIdAuthDynamoRepository implements IOpenIdAuthRepository {
   private readonly client: DynamoDBDocumentClient;

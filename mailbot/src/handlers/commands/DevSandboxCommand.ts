@@ -1,6 +1,6 @@
-import { JwtProvider } from "src/adapters/providers/JwtProvider";
-import { ListEnergyBillFilter } from "src/core/domain/filters/ListEnergyBillFilter";
-import { EnergyBillDynamoDbRepository } from "src/database/dynamodb/repositories/EnergyBillDynamoRepository";
+import { JwtProvider } from "../../../src/adapters/providers/JwtProvider";
+import { ListEnergyBillFilter } from "../../../src/core/domain/filters/ListEnergyBillFilter";
+import { EnergyBillDynamoDbRepository } from "../../../src/database/dynamodb/repositories/EnergyBillDynamoRepository";
 import yargs from "yargs";
 
 export class DevSandboxCommand {
