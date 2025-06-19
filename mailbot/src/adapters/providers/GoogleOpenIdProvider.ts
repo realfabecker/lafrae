@@ -1,11 +1,11 @@
 import axios from "axios";
 import qs from "node:querystring";
-import { OpenIdAuth } from "src/core/domain/auth/OpenIdAuth";
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { OpenIdAuthDoestNotExists } from "src/core/domain/errors/OpenIdAuthDoesNotExists";
-import { ILogger, Topic } from "src/core/ports/ILogger";
-import { IOpenIdAuthProvider } from "src/core/ports/IOpenIdAuthProvider";
-import { IOpenIdAuthRepository } from "src/core/ports/IOpenIdAuthRepository";
+import { OpenIdAuth } from "../../../src/core/domain/auth/OpenIdAuth";
+import { DomainResult } from "../../../src/core/domain/common/DomainResult";
+import { OpenIdAuthDoestNotExists } from "../../../src/core/domain/errors/OpenIdAuthDoesNotExists";
+import { ILogger, Topic } from "../../../src/core/ports/ILogger";
+import { IOpenIdAuthProvider } from "../../../src/core/ports/IOpenIdAuthProvider";
+import { IOpenIdAuthRepository } from "../../../src/core/ports/IOpenIdAuthRepository";
 
 export class GoogleOpenIdProvider implements IOpenIdAuthProvider {
   constructor(

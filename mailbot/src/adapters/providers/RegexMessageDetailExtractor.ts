@@ -1,7 +1,7 @@
-import { DomainResult } from "src/core/domain/common/DomainResult";
-import { MessageCrawler } from "src/core/domain/crawler/MessageCrawler";
-import { EmailMessage } from "src/core/domain/email/EmailMessage";
-import { IMessageDetailExtractor } from "src/core/ports/IMessageDetailExtractor";
+import { DomainResult } from "../../../src/core/domain/common/DomainResult";
+import { MessageCrawler } from "../../../src/core/domain/crawler/MessageCrawler";
+import { EmailMessage } from "../../../src/core/domain/email/EmailMessage";
+import { IMessageDetailExtractor } from "../../../src/core/ports/IMessageDetailExtractor";
 
 export class RegexMessageDetailExtractor implements IMessageDetailExtractor {
   public extract(

@@ -4,7 +4,7 @@ import {
   SendMessageCommand,
   SQSClientConfig,
 } from "@aws-sdk/client-sqs";
-import { DomainResult } from "src/core/domain/common/DomainResult";
+import { DomainResult } from "../../../src/core/domain/common/DomainResult";
 
 export class SQSQueueProvider implements IQueueProvider {
   private readonly client: SQSClient;

@@ -4,6 +4,7 @@
   "scripts": {
     "mailbot:cmd": "npx ts-node ./bin/cmd/cmd.ts",
     "mailbot:api": "npx ts-node ./bin/api/api.ts",
+    "mailbot:off": "npx sls offline --noAuth",
     "build": "tsc -b ./tsconfig.json && cp ./tsconfig.json ./build",
     "prepare": "husky"
   },

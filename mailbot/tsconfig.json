@@ -10,7 +10,7 @@
       "reflect-metadata"
     ],
     "allowJs": true,
-    "outDir": "build",
+    "outDir": "./.build",
     "rootDir": ".",
     "strict": true,
     "noImplicitAny": true,
@@ -21,8 +21,8 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@services/*": [
-        "core/services/*"
+      "@adapters/*": [
+        "./src/adapters/*"
       ],
     }
   },

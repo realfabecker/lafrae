@@ -1,4 +1,4 @@
-import { IJwtProvider } from "src/core/ports/IJwtProvider";
+import { IJwtProvider } from "../../../src/core/ports/IJwtProvider";
 import jwt from "jsonwebtoken";
 
 export class JwtProvider implements IJwtProvider {
