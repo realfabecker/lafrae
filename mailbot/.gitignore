@@ -1,9 +1,0 @@
-node_modules
-.idea
-.build/
-build.info
-site/*
-.env*
-!.env.sample
-volume
-.serverless
